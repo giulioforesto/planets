@@ -6,7 +6,7 @@ int timeOrigin = 0; // for rewind and fast forward
 static class Data {
   private static JSONArray data = new JSONArray();
 
-  private static int cursor = 0;
+  public static int cursor = 0;
 
   public static JSONObject getNextAtTime(int time) {
     while (cursor < data.size()) {
@@ -24,13 +24,19 @@ void getData() {
   
 }
 
+void display(JSONObject dataFrame) {
+  
+}
+
 void setup() {
   frameRate(FRAME_RATE_PARAM);
+  size(displayWidth, displayHeight);
 }
 
 void draw() {
   getData();
 
   JSONObject nextDataFrame = Data.getNextAtTime(floor((millis() - timeOrigin) / timeRatio));
+  display(nextDataFrame);
 }
 
