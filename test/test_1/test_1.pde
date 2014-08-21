@@ -1,3 +1,7 @@
+/**********
+ * TEST#1 *
+ **********/
+
 int NUMBER_OF_LINES = 99;
 /*
  * Input file sample:

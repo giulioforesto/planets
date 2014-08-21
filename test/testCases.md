@@ -17,8 +17,10 @@
 
 **1.** Create 1,000,000-line files and test file reading methods above.
 
-**2.** Create long and short version of a file and compare `BufferedReader` reading time for the same first `n` lines. 
-#####Buffered Reader
+**2.** Create long and short version of a file and compare `BufferedReader` reading time for the same first `n` lines.
+
+**`Test #1`**
+
     File		| 1.000.000 l	| 1000 l	| 200 l		| 100 l
     ------------+---------------+-----------+-----------+---------
     1000 l read | 30 ms			| 32 ms		|			|
