@@ -1,7 +1,7 @@
 ! Paramètres
 
-integer , parameter                                     :: real_kind = 8       ! Precision du calcul
-integer , parameter                                     :: num_steps = 200      ! nombre d'étapes de la méthode
+integer , parameter                                     :: real_kind = 16       ! Precision du calcul
+integer , parameter                                     :: num_steps = 40    ! nombre d'étapes de la méthode
 
 ! Tableaux statiques
 
