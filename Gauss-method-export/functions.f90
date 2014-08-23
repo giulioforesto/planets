@@ -117,7 +117,7 @@ subroutine writebutchertable(a,b,c,s,prec)
     integer                             :: i
     
     
-    write(filename, '(A25,I3,A4,I2,A4)') "./output/gauss_butch_table", s,"prec",prec,".txt"
+    write(filename, '(A26,I3,A4,I2,A4)') "./output/gauss_butch_table", s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
     
@@ -140,10 +140,8 @@ subroutine writegaussmeth(x,w,s,prec)
     character(len=50)                                           :: filename
     
     integer , parameter                 :: iounit = 2       ! Number required by Fortran for Input/Output
-    integer                             :: i
     
-    
-    write(filename, '(A22,I3,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
+    write(filename, '(A23,I3,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
     
