@@ -121,6 +121,7 @@ subroutine writebutchertable(a,b,c,s,prec)
     
     open(unit = iounit, file = trim(filename))
     
+    write(iounit,*) s
     write(iounit,*) b
     write(iounit,*) c
     
@@ -144,7 +145,8 @@ subroutine writegaussmeth(x,w,s,prec)
     write(filename, '(A23,I3,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
-    
+
+    write(iounit,*) s    
     write(iounit,*) w
     write(iounit,*) x
     
