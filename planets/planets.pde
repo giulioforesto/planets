@@ -3,11 +3,15 @@ import java.util.Iterator;
 
 int FRAME_RATE_PARAM = 30; // TODO fixe. à fixer en fct des résultats de gab
 String FILE_NAME = ""; // TODO À définir
+int MASS_DISPLAY_RATIO; // TODO À définir: d/m where d is the sketch diameter (to scale) and m the given mass.
+int[] DIMENSIONS = new int[] {displayWidth, displayHeight};
+int[] ORIGIN = new int[] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
 
 float timeRatio; // TODO timeRatio = realPlotTime/simulationTimeVariable - voir avec gabriel le standard
 int timeOrigin = 0; // for rewind and fast forward
+int scaleRatio; // define default
 
-TreeMap<String,Integer> colors = new TreeMap<String,Integer>(); // TODO Find appropriate type instead of Integer
+TreeMap<String,Integer> colors = new TreeMap<String,Integer>();
 
 BufferedReader reader;
 
@@ -77,6 +81,7 @@ void display(JSONObject dataFrame) {
       planetMass = newMasses.getFloat(objectKey);
     } else {
       // TODO Implement this according to what is decided about the writing order (issue #3)
+      planetMass = 1;
     }
     
     if (colors.has(objectKey)) {
@@ -86,17 +91,22 @@ void display(JSONObject dataFrame) {
       planetColor = color(204, 153, 0);
     }
     
-    display(planetCoords, 1, planetColor);
+    display(planetCoords, planetMass, planetColor);
   }
 }
 
 void display(float[] coords, float mass, color planetColor) {
-  // TODO Implement this
+  int diameter = mass * MASS_DISPLAY_RATIO * scaleRatio;
+  int x = ORIGIN[0] + coords[0]*scaleRatio;
+  int y = ORIGIN[1] + coords[1]*scaleRatio;
+  fill(planetColor);
+  ellipse(x, y, diameter, diameter);
 }
 
 void setup() {
   frameRate(FRAME_RATE_PARAM);
-  size(displayWidth, displayHeight);
+  size(DIMENSIONS[0], DIMENSIONS[1]);
+  noStroke();
 }
 
 void draw() {
