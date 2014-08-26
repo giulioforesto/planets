@@ -9,16 +9,25 @@
 	- `loadStrings()`
 	- `loadJSONArray()` (don't forget final `']'`)
 
-####Questions
-
-- Doesn't the `BufferedReader` read all the file anyway?
-
 ####Tests
+#####1. Create 1,000,000-line files and test file reading methods above.
+######BufferedReader
+**`Test #2`**
 
-**1.** Create 1,000,000-line files and test file reading methods above.
+**Purpose:** Measure execution time of skipping characters (`BufferedReader.skip()`) until the end of the file (the number of characters to skip would be stored and updated each time).
 
-**2.** Create long and short version of a file and compare `BufferedReader` reading time for the same first `n` lines. 
-#####Buffered Reader
+**Results:** Execution time for skipping 20,700,000 characters: **47 ms**.
+
+**Interpretation:** With approximately 340 characters a line, 20,700,000 characters represent approximately 61,000 lines. For a simulation step rate of 30 /s this means 2033 s, ie 34 minutes of simulation.
+
+**Conclusion:** The execution time of skipping until the end of the file seems to be far too long. Moreover, it would linearly increase with the duration of the simulation, which is blasphemy.
+
+#####2. Create long and short version of a file and compare `BufferedReader` reading time for the same first `n` lines.
+
+**`Test #1`**
+
+**Results:**
+
     File		| 1.000.000 l	| 1000 l	| 200 l		| 100 l
     ------------+---------------+-----------+-----------+---------
     1000 l read | 30 ms			| 32 ms		|			|
