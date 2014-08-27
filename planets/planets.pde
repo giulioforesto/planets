@@ -5,12 +5,13 @@ int FRAME_RATE_PARAM = 30; // TODO fixe. à fixer en fct des résultats de gab
 String FILE_NAME = ""; // TODO À définir
 int MASS_DISPLAY_RATIO; // TODO À définir: d/m where d is the sketch diameter (to scale) and m the given mass.
 int[] DIMENSIONS = new int[] {displayWidth, displayHeight};
-int[] ORIGIN = new int[] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
+int[] origin = new int[] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
 
 float timeRatio; // TODO timeRatio = realPlotTime/simulationTimeVariable - voir avec gabriel le standard
 int timeOrigin = 0; // for rewind and fast forward
 int scaleRatio; // define default
 
+TreeMap<String,Float> masses = new TreeMap<String,Float>();
 TreeMap<String,Integer> colors = new TreeMap<String,Integer>();
 
 BufferedReader reader;
@@ -38,6 +39,13 @@ static class Data { // TODO Update this according to what is decided about the w
   }
 }
 
+void randomColor() {
+  int r = random(256);
+  int g = random(256);
+  int b = random(256);
+  return color(r, g, b);
+}
+
 void getData() { // TODO Update this according to what is decided about the writing order (issue #3)
   reader = createReader(FILE_NAME);
   
@@ -63,6 +71,8 @@ void getData() { // TODO Update this according to what is decided about the writ
 }
 
 void display(JSONObject dataFrame) {
+  background(255,255,255);
+  
   JSONObject positions = dataFrame.getJSONObject("x");
   JSONObject newMasses = dataFrame.getJSONObject("m"); // must be {} (empty object) if no new masses
   
@@ -79,16 +89,20 @@ void display(JSONObject dataFrame) {
     
     if (newMasses.has(objectKey)) {
       planetMass = newMasses.getFloat(objectKey);
-    } else {
-      // TODO Implement this according to what is decided about the writing order (issue #3)
-      planetMass = 1;
+      masses.add(planetMass);
+    } 
+    else if (masses.containsKey(objectKey)) {
+      planetMass = masses.get(objectKey);
+    }
+    else {
+      println("Error: No mass for planet " + objectKey);
     }
     
-    if (colors.has(objectKey)) {
+    if (colors.containsKey(objectKey)) {
       planetColor = colors.get(objecKey);
     } else {
-      // TODO Implement this
-      planetColor = color(204, 153, 0);
+      planetColor = randomColor();
+      colors.add(objectKey, planetColor);
     }
     
     display(planetCoords, planetMass, planetColor);
@@ -97,8 +111,8 @@ void display(JSONObject dataFrame) {
 
 void display(float[] coords, float mass, color planetColor) {
   int diameter = mass * MASS_DISPLAY_RATIO * scaleRatio;
-  int x = ORIGIN[0] + coords[0]*scaleRatio;
-  int y = ORIGIN[1] + coords[1]*scaleRatio;
+  int x = origin[0] + coords[0]*scaleRatio;
+  int y = origin[1] + coords[1]*scaleRatio;
   fill(planetColor);
   ellipse(x, y, diameter, diameter);
 }
