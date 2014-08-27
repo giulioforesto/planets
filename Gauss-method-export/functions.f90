@@ -311,7 +311,6 @@ subroutine sumk(p,n,k,res)
 
 end subroutine
 
-
 subroutine efthornerk(P,n,a,k,hi,pi)
 
     real (kind = real_kind) , dimension(0:n)                , intent(in)    :: P
@@ -332,7 +331,7 @@ subroutine efthornerk(P,n,a,k,hi,pi)
     
     do j=1,k-1
         do l=i,(2*i-1)
-            call efthorner(pi(:,l),n+1-i,a,hi(l),pi(0:n-i,2*l),pi(0:n-i,2*l+1))
+            call efthorner(pi(0:n+1-j,l),n+1-j,a,hi(l),pi(0:n-j,2*l),pi(0:n-j,2*l+1))
         end do
         i = 2*i
     end do

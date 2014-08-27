@@ -132,6 +132,8 @@ subroutine writetoend_currentstate_nomasschange(iounit,t,xi,nb,nd)
     character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
 
+!~     rewind(iounit)
+
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
     write(iounit,'(A)',advance='no') ",'x':{"
     

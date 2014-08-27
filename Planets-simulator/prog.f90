@@ -39,7 +39,9 @@ dt = dtinit
 ! Write initial state in output file
 
 t_o = 0
-open(unit = outiounit, file = trim(outputfilename))
+open(unit = outiounit, file = trim(outputfilename), access='sequential', action='write',position='rewind')
+write(outiounit,*) 'a'
+
 call writeinitstate(outiounit,t,mi,xi,nb,nd)
 
 ! Main loop
@@ -53,7 +55,9 @@ do while (t < tf)
                 
     else
         ! The method is treated implicitely
-        ! Todo
+        
+        include 'solve_implicit.f90'
+        
     end if
     
     ! Update current time

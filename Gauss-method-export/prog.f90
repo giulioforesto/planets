@@ -1,3 +1,84 @@
+! Some tests
+
+a=1d16
+b=1d8
+x=1
+y=1
+
+call efttwoprod(a,b,x,y)
+
+print*,'a=',a
+print*,'b=',b
+print*,'x=',x
+print*,'y=',y
+
+
+allocate(aa(0:10))
+
+
+aa(0) = 1
+aa(1) = -10
+aa(2) = 45
+aa(3) = -120
+aa(4) = 210
+aa(5) = -252
+aa(6) = 210
+aa(7) = -120
+aa(8) = 45
+aa(9) = -10
+aa(10) = 1
+
+
+call sumk(aa,6,1,x)
+
+print*,'x=',x
+
+a = 1.000001d0
+
+print*,aa
+x=0
+
+call polyeval_horner(aa,10,a,x)
+print*,x
+call comphornerk(aa,10,a,1,x)
+print*,x
+call comphornerk(aa,10,a,2,x)
+print*,x
+call comphornerk(aa,10,a,3,x)
+print*,x
+call comphornerk(aa,10,a,4,x)
+print*,x
+call comphornerk(aa,10,a,5,x)
+print*,x
+call comphornerk(aa,10,a,6,x)
+print*,x
+call comphornerk(aa,10,a,7,x)
+print*,x
+call comphornerk(aa,10,a,8,x)
+print*,x
+call comphornerk(aa,10,a,9,x)
+print*,x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ! Pour tous les ordres jusqu'à num_steps, la procédure exporte les tableaux de Butcher associés aux méthodes de Gauss-Legendre.
 
 Pleg = 0
