@@ -63,7 +63,7 @@ do while (t < tf)
     ! Write output
     
     if (t > t_o + dto) then
-        call writecurrentstate_nomasschange(outiounit,t,xi,nb,nd)
+        call writetoend_currentstate_nomasschange(outiounit,t,xi,nb,nd)
         t_o = t
     end if
     

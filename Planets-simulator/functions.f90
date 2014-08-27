@@ -84,34 +84,43 @@ subroutine writeinitstate(iounit,t,mi,xi,nb,nd)
     integer                                                     , intent(in)    :: nb       ! Number of bodies
     integer                                                     , intent(in)    :: nd       ! Number of space dimensions
     
-    character (len=50)                                                          :: varname,varnum
+    character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
+    write(iounit,'(A)',advance='no') ",'x':{"
     
-    do i=1,nb
-        write(varnum,'(I3.3)') i
-        write(varname,'(A,A)')  'm',trim(varnum)    
-        write(iounit,'(A,A,A)',advance='no') ",'",trim(varname),"':"
-        write(iounit,'(E18.12)',advance='no')    mi(i)
-    end do
-        
-    do i=1,nb
-        write(varnum,'(I3.3)') i
-        write(varname,'(A,A)')  'x',trim(varnum)    
-        write(iounit,'(A,A,A)',advance='no') ",'",trim(varname),"':["
+    do i=1,nb-1
+        write(varnum,'(I4.4)') i
+        write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
         do j=1,nd-1
             write(iounit,'(E18.12,A)',advance='no')    xi(j,i),","
         end do
-        write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"]"
+        write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"],"
     end do
-    
+    write(varnum,'(I4.4)') nb
+    write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
+    do j=1,nd-1
+        write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
+    end do
+    write(iounit,'(E18.12,A)',advance='no')    xi(nd,nb),"]},"
+
+    write(iounit,'(A)',advance='no') "'m':{"
+    do i=1,nb-1
+        write(varnum,'(I4.4)') i
+        write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
+        write(iounit,'(E18.12,A)',advance='no')    mi(i),","
+    end do
+    write(varnum,'(I4.4)') nb
+    write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
+    write(iounit,'(E18.12,A)',advance='no')    mi(nb),"}"
+
     write(iounit,'(A)')    "}"
 
 end subroutine
 
 
-subroutine writecurrentstate_nomasschange(iounit,t,xi,nb,nd)
+subroutine writetoend_currentstate_nomasschange(iounit,t,xi,nb,nd)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
@@ -119,20 +128,27 @@ subroutine writecurrentstate_nomasschange(iounit,t,xi,nb,nd)
     integer                                                     , intent(in)    :: nb       ! Number of bodies
     integer                                                     , intent(in)    :: nd       ! Number of space dimensions
     
-    character (len=50)                                                          :: varname,varnum
+    
+    character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
-        
-    do i=1,nb
-        write(varnum,'(I3.3)') i
-        write(varname,'(A,A)')  'x',trim(varnum)    
-        write(iounit,'(A,A,A)',advance='no') ",'",trim(varname),"':["
+    write(iounit,'(A)',advance='no') ",'x':{"
+    
+    do i=1,nb-1
+        write(varnum,'(I4.4)') i
+        write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
         do j=1,nd-1
             write(iounit,'(E18.12,A)',advance='no')    xi(j,i),","
         end do
-        write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"]"
+        write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"],"
     end do
+    write(varnum,'(I4.4)') nb
+    write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
+    do j=1,nd-1
+        write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
+    end do
+    write(iounit,'(E18.12,A)',advance='no')    xi(nd,nb),"]}"
     
     write(iounit,'(A)')    "}"
 
