@@ -33,7 +33,7 @@ call sumk(aa,6,1,x)
 
 print*,'x=',x
 
-a = 1.000001d0
+a = 1.0000000001d0
 
 print*,aa
 x=0

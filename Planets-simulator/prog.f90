@@ -40,7 +40,6 @@ dt = dtinit
 
 t_o = 0
 open(unit = outiounit, file = trim(outputfilename), access='sequential', action='write',position='rewind')
-write(outiounit,*) 'a'
 
 call writeinitstate(outiounit,t,mi,xi,nb,nd)
 
