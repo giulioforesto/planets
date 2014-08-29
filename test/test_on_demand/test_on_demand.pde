@@ -2,24 +2,24 @@
  * TEST ON DEMAND *
  ******************/
 
-String line = "";
+import java.io.InputStreamReader;
 
 try {
+  File file = new File("./test.txt");
+  println(file.getAbsolutePath());
+  
+  PrintWriter writer = new PrintWriter(file);
+  writer.println("ciao");
+  
   long start = millis();
   
-  BufferedReader reader = createReader("../test_1/test_long.txt");
-  line = reader.readLine();
+  //BufferedReader in = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(file)));
+  //String line = in.readLine();
+  
+  //println(line);
+  
   println(millis() - start);
-  println(line);
-  
-  line = "";
-  
-  long start2 = millis();
-  reader.skip(23*900000 - 5);
-  line = reader.readLine();
-  println(millis() - start2);
-  println(line);
-  
-} catch (Exception e) {
+}
+catch (Exception e) {
   e.printStackTrace();
 }
