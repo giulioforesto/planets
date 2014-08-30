@@ -75,17 +75,17 @@ subroutine readinitstate(filename,mi,xi,vi,n)
 
 end subroutine
 
-subroutine writeinitstate(iounit,t,mi,xi,nb,nd)
+subroutine writeinitstate(iounit,t,mi,xi,vi,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
     real (kind=real_kind)   , allocatable   , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
-    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi       ! Position and velocity of bodies
+    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
     integer                                                     , intent(in)    :: nb       ! Number of bodies
-    integer                                                     , intent(in)    :: nd       ! Number of space dimensions
     
     character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
+    real (kind=real_kind)                                                       :: nrj
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
     write(iounit,'(A)',advance='no') ",'x':{"
@@ -115,24 +115,27 @@ subroutine writeinitstate(iounit,t,mi,xi,nb,nd)
     write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
     write(iounit,'(E18.12,A)',advance='no')    mi(nb),"}"
 
+    call compute_energy(mi,xi,vi,nb,nrj)
+
+    write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
+
     write(iounit,'(A)')    "}"
 
 end subroutine
 
 
-subroutine writetoend_currentstate_nomasschange(iounit,t,xi,nb,nd)
+subroutine writecurrentstate_nomasschange(iounit,t,mi,xi,vi,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
-    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi       ! Position and velocity of bodies
+    real (kind=real_kind)   , allocatable   , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
+    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
     integer                                                     , intent(in)    :: nb       ! Number of bodies
-    integer                                                     , intent(in)    :: nd       ! Number of space dimensions
     
     
     character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
-
-!~     rewind(iounit)
+    real (kind=real_kind)                                                       :: nrj
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
     write(iounit,'(A)',advance='no') ",'x':{"
@@ -151,6 +154,10 @@ subroutine writetoend_currentstate_nomasschange(iounit,t,xi,nb,nd)
         write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
     end do
     write(iounit,'(E18.12,A)',advance='no')    xi(nd,nb),"]}"
+
+    call compute_energy(mi,xi,vi,nb,nrj)
+
+    write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
     
     write(iounit,'(A)')    "}"
 
@@ -171,4 +178,47 @@ subroutine init_random_seed()
     call random_seed(put = seed)
       
     deallocate(seed)
+end subroutine
+
+subroutine compute_energy(mi,xi,vi,nb,res)
+
+    real(kind=real_kind)    , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
+    real(kind=real_kind)    , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
+    integer                                     , intent(in)    :: nb       ! Number of bodies
+    real(kind=real_kind)                        , intent(out)   :: res      ! Total energy of the system
+    
+    integer                                                     :: i,k,l
+    real(kind=real_kind)                                        :: temp     ! temporary variable
+    real(kind=real_kind)                                        :: kin,pot     ! Different types of energy
+    real(kind=real_kind)    , dimension(nd)                     :: dx       ! Distance between two bodies
+    
+    kin = 0
+    
+    do k=1,nb
+        temp = vi(1,k)*vi(1,k)
+        do i=2,nd
+            temp = temp + vi(i,k)*vi(i,k)    
+        end do
+        kin = kin + mi(k)*temp
+    end do
+    
+    kin = kin/2
+    
+    pot = 0
+    
+    do k=1,nb
+        do l=k+1,nb
+            dx = xi(:,k) - xi(:,l)
+            temp = dx(1)*dx(1)
+            do i=2,nd
+                temp = temp + dx(i)*dx(i)
+            end do
+            pot = pot + mi(k)*mi(l)*(temp**( (fpow)/2 ))
+        end do
+    end do
+    
+    pot = -Guniv*pot
+    
+    res = kin + pot
+    
 end subroutine

@@ -85,7 +85,7 @@ do k=1,nb-1
             
             ! Write state to output file
             
-            call writeinitstate(outiounit,t,mi,xi,nb,nd)
+            call writeinitstate(outiounit,t,mi,xi,vi,nb)
 
         end if
         

@@ -10,11 +10,11 @@ real (kind = real_kind) , parameter                     :: errsummax = 1d-17    
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 0.001        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 0.0001        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 logical                 , parameter                     :: loadinitstate = .false. ! Loads initial state from file or creates a random one
-integer                 , parameter                     :: nbinit = 20          ! Initial number of bodies to create.
+integer                 , parameter                     :: nbinit = 10          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
@@ -26,7 +26,7 @@ real (kind = real_kind) , parameter                     :: Guniv = 1            
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
-real (kind = real_kind) , parameter                     :: dx2min = 1d-3       ! Minimum square distance before collision
+real (kind = real_kind) , parameter                     :: dx2min = 1d-4       ! Minimum square distance before collision
 
 real (kind = real_kind) , parameter                     :: tf = 100             ! End of simulation time
 real (kind = real_kind) , parameter                     :: dto = 1d-1            ! Output time step

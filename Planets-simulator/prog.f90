@@ -60,7 +60,7 @@ end if
 t_o = 0
 open(unit = outiounit, file = trim(outputfilename), access='sequential', action='write',position='rewind')
 
-call writeinitstate(outiounit,t,mi,xi,nb,nd)
+call writeinitstate(outiounit,t,mi,xi,vi,nb)
 
 ! Main loop
 
@@ -85,7 +85,7 @@ do while (t < tf)
     ! Write output
     
     if (t > t_o + dto) then
-        call writetoend_currentstate_nomasschange(outiounit,t,xi,nb,nd)
+        call writecurrentstate_nomasschange(outiounit,t,mi,xi,vi,nb)
         t_o = t
         
         print*,'t=',t
