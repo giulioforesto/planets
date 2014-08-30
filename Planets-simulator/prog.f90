@@ -4,6 +4,8 @@ call readbutchertable(butchtablefilename,a_butch,b_butch,c_butch,ns)
 ! Read initial state
 call readinitstate(initstatefilename,mi,xi,vi,nb)
 
+! Change of frame where center of mass is ALWAYS at origin
+
 if (centerinit) then
     xmoy = 0
     vmoy = 0
@@ -26,15 +28,30 @@ end if
 
 ! Set memory and variables up
 
-allocate(kxi(nd,nb,ns))
-allocate(kvi(nd,nb,ns))
-
-allocate(xinow(nd,nb))
-allocate(vinow(nd,nb))
-allocate(fijnow(nd,nb,nb))
-
 t = 0
 dt = dtinit
+
+
+allocate(fijnow(nd,nb,nb))
+allocate(xinow(nd,nb))
+allocate(kxi(nd,nb,ns))
+allocate(kvi(nd,nb,ns))
+allocate(vinow(nd,nb))
+
+if (.not. explicitRK) then
+    
+    dt2 = dt*dt
+    
+    allocate(a_butch2(ns,ns))
+    a_butch2 = matmul(a_butch,a_butch)
+
+    allocate(zxi0(nd,nb,ns))    
+    allocate(zxi1(nd,nb,ns))
+    allocate(zxi2(nd,nb,ns))    
+
+    allocate(kdvi(nd,nb,ns))
+    
+end if
 
 ! Write initial state in output file
 
@@ -68,7 +85,11 @@ do while (t < tf)
     if (t > t_o + dto) then
         call writetoend_currentstate_nomasschange(outiounit,t,xi,nb,nd)
         t_o = t
+        
+        print*,'t=',t
+        
     end if
+    
     
 end do
 

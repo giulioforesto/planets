@@ -3,8 +3,12 @@
 integer                 , parameter                     :: real_kind = 8        ! Precision du calcul
 
 character(len=*)        , parameter                     :: butchtablefilename = &
-    './input/methods/explicit/kutta_3_8th_table.txt'
-logical                 , parameter                     :: explicitRK = .true.  ! If true then the method is treated as expicit, if false, then the method is treated as implicit.
+    './input/methods/implicit/gauss_butch_table 10prec16.txt'
+!~     './input/methods/explicit/kutta_3_8th_table.txt'
+logical                 , parameter                     :: explicitRK = .false. ! If true then the method is treated as expicit, if false, then the method is treated as implicit.
+real (kind = real_kind) , parameter                     :: errsummax = 1d-17    ! Maximum difference between two iterations of implicit method
+integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
+
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
 real (kind = real_kind) , parameter                     :: dtinit = 1d-2        ! Inital time step
 
@@ -16,7 +20,7 @@ character(len=*)        , parameter                     :: outputfilename = &
 real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
 
-real (kind = real_kind) , parameter                     :: tf = 100              ! End of simulation time
+real (kind = real_kind) , parameter                     :: tf = 100             ! End of simulation time
 real (kind = real_kind) , parameter                     :: dto = 0.1            ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
@@ -28,23 +32,29 @@ real (kind = real_kind) , dimension(nd)                     :: dxnow,dvnow      
 
 ! Tableaux dynamiques & variables
 
-real (kind = real_kind) , allocatable   , dimension(:,:)    :: a_butch          ! Butcher a matrix
-real (kind = real_kind) , allocatable   , dimension(:)      :: b_butch,c_butch  ! Butcher b and c vectors
+real (kind = real_kind) , allocatable   , dimension(:,:)    :: a_butch, a_butch2! Butcher a matrix and its square
+real (kind = real_kind) , allocatable   , dimension(:)      :: b_butch, c_butch ! Butcher b and c vectors
 integer                                                     :: ns               ! Number of stages of the Runge-Kutta method
 
 real (kind = real_kind) , allocatable   , dimension(:)      :: mi               ! Masses of bodies
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xi,vi            ! Positions and velocities of bodies
 integer                                                     :: nb               ! Number of bodies
 
-real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate Runge-Kutta stages for positions and velocities
+real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate explicit Runge-Kutta stages for positions and velocities
+real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: zxi0,zxi1,zxi2   ! Intermediate implicit Runge-Kutta stages for positions and velocities
+real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kdvi             ! Initial implicit Runge-Kutta guess
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xinow,vinow      ! Intermediate position and velocity
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: fijnow           ! Intermediate reciprocal forces 
 
+logical                                                     :: implcvgd         ! Convergence of implicit iterations
+integer                                                     :: nit              ! Number of implicit iterations
 
-real (kind = real_kind)                                     :: t,dt             ! Current time and time step
+real (kind = real_kind)                                     :: t,dt,dt2         ! Current time, time step and squared time step
 real (kind = real_kind)                                     :: t_o              ! Last output time
 real (kind = real_kind)                                     :: mtot             ! Total mass of the system
 real (kind = real_kind)                                     :: dxnow2           ! Square distance between two bodies
+real (kind = real_kind)                                     :: errsum           ! Difference between two implicit iterations
+
 
 ! Autres merdes : itérateurs, variables tests ou réutilisables 
     !Itérateurs

@@ -1,3 +1,7 @@
+! Functions concerning compensated polynomial evaluation.
+! Maximum optimisation level : -O3
+! DO NOT compile with -ffast-math or -Ofast
+
 subroutine polyeval_horner(P,n,a,res)  ! Evaluates polynom P of degree n at a and stores result in res
 
     real (kind = real_kind) , dimension(0:n), intent(in)    :: P

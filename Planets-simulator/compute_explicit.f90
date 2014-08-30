@@ -27,12 +27,11 @@ do i=1,ns
     
     do k=1,nb
         dvnow = 0
-        do l=1,nb
-            if (k < l) then
-                dvnow = mi(l) * fijnow(:,k,l)
-            else if (k > l) then
-                dvnow = - mi(l) * fijnow(:,l,k)
-            end if
+        do l=1,k-1
+            dvnow = dvnow - mi(l) * fijnow(:,l,k)
+        end do
+        do l=k+1,nb
+            dvnow = dvnow + mi(l) * fijnow(:,k,l)
         end do
         kvi(:,k,i) = dvnow
     end do    
