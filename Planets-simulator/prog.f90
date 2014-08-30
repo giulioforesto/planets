@@ -1,9 +1,13 @@
 ! Read method coefficients
 call readbutchertable(butchtablefilename,a_butch,b_butch,c_butch,ns)
 
-! Read initial state
-call readinitstate(initstatefilename,mi,xi,vi,nb)
-
+if (loadinitstate) then
+    ! Read initial state from file
+    call readinitstate(initstatefilename,mi,xi,vi,nb)
+else
+    ! Creates initial state randomly
+    include 'randominitstate.f90'
+end if
 ! Change of frame where center of mass is ALWAYS at origin
 
 if (centerinit) then

@@ -155,3 +155,20 @@ subroutine writetoend_currentstate_nomasschange(iounit,t,xi,nb,nd)
     write(iounit,'(A)')    "}"
 
 end subroutine
+
+! Subroutine to generate random seed based on clock timing
+subroutine init_random_seed()
+
+    integer :: ii, nn, clock
+    integer, dimension(:), allocatable :: seed
+    
+    call random_seed(size = nn)
+    allocate(seed(nn))
+      
+    call system_clock(count=clock)
+      
+    seed = clock + 37 * (/ (ii - 1, ii = 1, nn) /)
+    call random_seed(put = seed)
+      
+    deallocate(seed)
+end subroutine
