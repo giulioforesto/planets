@@ -48,8 +48,6 @@ if (.not. explicitRK) then
     allocate(zxi0(nd,nb,ns))    
     allocate(zxi1(nd,nb,ns))
     allocate(zxi2(nd,nb,ns))    
-
-    allocate(kdvi(nd,nb,ns))
     
 end if
 
@@ -90,6 +88,9 @@ do while (t < tf)
         
     end if
     
+    ! Collision detection
+    
+    include "collisions.f90"
     
 end do
 

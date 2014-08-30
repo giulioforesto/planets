@@ -1,12 +1,12 @@
-! Solves the implicit Runge-Kutta Equations for the next variables 
+! Solves the implicit Runge-Kutta equations for the next variables 
 
 do i=1,ns
     zxi0(:,:,i) = c_butch(i)*vi
 end do
 zxi0 = dt * zxi0
 
-!~ zxi1 = zxi0
-zxi1 = 0
+zxi1 = zxi0
+!~ zxi1 = 0
 
 implcvgd = .false.
 
@@ -20,7 +20,7 @@ do while (.not. implcvgd )
         xinow = xi + zxi1(:,:,i)
         
         do k=1,nb-1
-            do l=k,nb
+            do l=k+1,nb
                 dxnow = xinow(:,l) - xinow(:,k)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
@@ -43,13 +43,13 @@ do while (.not. implcvgd )
     end do
         
     do i=1,ns
-        kdvi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)
+        kxi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)
         do j=2,ns
-            kdvi(:,:,i) = kdvi(:,:,i) + a_butch2(i,j)*kvi(:,:,j)
+            kxi(:,:,i) = kxi(:,:,i) + a_butch2(i,j)*kvi(:,:,j)
         end do
     end do
     
-    zxi2 = zxi0 + dt2 * kdvi
+    zxi2 = zxi0 + dt2 * kxi
     
     ! zxi2 => zxi1
     
@@ -57,7 +57,7 @@ do while (.not. implcvgd )
         xinow = xi + zxi2(:,:,i)
         
         do k=1,nb-1
-            do l=k,nb
+            do l=k+1,nb
                 dxnow = xinow(:,l) - xinow(:,k)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
@@ -80,24 +80,24 @@ do while (.not. implcvgd )
     end do
         
     do i=1,ns
-        kdvi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)
+        kxi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)
         do j=2,ns
-            kdvi(:,:,i) = kdvi(:,:,i) + a_butch2(i,j)*kvi(:,:,j)
+            kxi(:,:,i) = kxi(:,:,i) + a_butch2(i,j)*kvi(:,:,j)
         end do
     end do
     
-    zxi1 = zxi0 + dt2 * kdvi
+    zxi1 = zxi0 + dt2 * kxi
 
     ! Has it converged ?
     
-    kdvi = abs(zxi1-zxi2)
+    kxi = abs(zxi1-zxi2)
     
     errsum = 0
     
     do i=1,ns
         do j=1,nb
             do k=1,nd
-                errsum = errsum + kdvi(k,j,i)  
+                errsum = errsum + kxi(k,j,i)  
             end do
         end do
     end do
@@ -109,7 +109,6 @@ do while (.not. implcvgd )
 end do
 
 ! Computes kvi and kxi from zxi1
-
 
 do i=1,ns
 

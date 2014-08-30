@@ -10,25 +10,26 @@ real (kind = real_kind) , parameter                     :: errsummax = 1d-17    
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 1d-2        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 0.001        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 character(len=*)        , parameter                     :: initstatefilename = &
-    './input/init_states/init_test.txt'
+    './input/init_states/init_test_crash.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
 real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
+real (kind = real_kind) , parameter                     :: dx2min = 1d-3       ! Minimum square distance before collision
 
 real (kind = real_kind) , parameter                     :: tf = 100             ! End of simulation time
-real (kind = real_kind) , parameter                     :: dto = 0.1            ! Output time step
+real (kind = real_kind) , parameter                     :: dto = 1d-1            ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
 
 ! Tableaux statiques
 
-real (kind = real_kind) , dimension(nd)                     :: xmoy,vmoy        ! Initial mean position and velocity
-real (kind = real_kind) , dimension(nd)                     :: dxnow,dvnow            ! Distance / length increment / velocity increment between two bodies
+real (kind = real_kind) , dimension(nd)                     :: xmoy,vmoy        ! Mean position and velocity
+real (kind = real_kind) , dimension(nd)                     :: dxnow,dvnow      ! Distance / length increment / velocity increment between two bodies
 
 ! Tableaux dynamiques & variables
 
@@ -40,9 +41,8 @@ real (kind = real_kind) , allocatable   , dimension(:)      :: mi               
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xi,vi            ! Positions and velocities of bodies
 integer                                                     :: nb               ! Number of bodies
 
-real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate explicit Runge-Kutta stages for positions and velocities
+real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate Runge-Kutta stages for positions and velocities
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: zxi0,zxi1,zxi2   ! Intermediate implicit Runge-Kutta stages for positions and velocities
-real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kdvi             ! Initial implicit Runge-Kutta guess
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xinow,vinow      ! Intermediate position and velocity
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: fijnow           ! Intermediate reciprocal forces 
 
@@ -54,6 +54,9 @@ real (kind = real_kind)                                     :: t_o              
 real (kind = real_kind)                                     :: mtot             ! Total mass of the system
 real (kind = real_kind)                                     :: dxnow2           ! Square distance between two bodies
 real (kind = real_kind)                                     :: errsum           ! Difference between two implicit iterations
+
+real (kind = real_kind) , allocatable   , dimension(:)      :: mib              ! Mass buffer in case of collision
+real (kind = real_kind) , allocatable   , dimension(:,:)    :: xib,vib          ! Position and velocity buffers in case of collision
 
 
 ! Autres merdes : itérateurs, variables tests ou réutilisables 

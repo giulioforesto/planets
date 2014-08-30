@@ -15,7 +15,7 @@ do i=1,ns
     kxi(:,:,i) = vi + dt*vinow        
 
     do k=1,nb-1
-        do l=k,nb
+        do l=k+1,nb
             dxnow = xinow(:,l) - xinow(:,k)
             dxnow2 = dxnow(1)*dxnow(1)
             do p=2,nd
