@@ -3,7 +3,7 @@
 integer                 , parameter                     :: real_kind = 8    ! Precision du calcul
 integer                 , parameter                     :: eftk = 4         ! Performs EFT eftk times
 real (kind = real_kind) , parameter                     :: one = 1          ! Unit value in working precision
-integer                 , parameter                     :: num_steps = 1    ! nombre d'étapes de la méthode
+integer                 , parameter                     :: num_steps = 100    ! nombre d'étapes de la méthode
 
 ! Tableaux statiques
 

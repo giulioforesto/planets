@@ -10,6 +10,7 @@ program main
 contains
 
     include 'functions.f90'
+    include 'functions_eft.f90'
     
 end program main
 

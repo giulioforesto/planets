@@ -1,105 +1,12 @@
-! Some tests
-
-a=1d16
-b=1d8
-x=1
-y=1
-
-call efttwoprod(a,b,x,y)
-
-print*,'a=',a
-print*,'b=',b
-print*,'x=',x
-print*,'y=',y
-
-
-allocate(aa(0:10))
-
-
-aa(0) = 1
-aa(1) = -10
-aa(2) = 45
-aa(3) = -120
-aa(4) = 210
-aa(5) = -252
-aa(6) = 210
-aa(7) = -120
-aa(8) = 45
-aa(9) = -10
-aa(10) = 1
-
-
-call sumk(aa,6,1,x)
-
-print*,'x=',x
-
-a = 1.0000000001d0
-
-print*,aa
-x=0
-
-call polyeval_horner(aa,10,a,x)
-print*,x
-call comphornerk(aa,10,a,1,x)
-print*,x
-call comphornerk(aa,10,a,2,x)
-print*,x
-call comphornerk(aa,10,a,3,x)
-print*,x
-call comphornerk(aa,10,a,4,x)
-print*,x
-call comphornerk(aa,10,a,5,x)
-print*,x
-call comphornerk(aa,10,a,6,x)
-print*,x
-call comphornerk(aa,10,a,7,x)
-print*,x
-call comphornerk(aa,10,a,8,x)
-print*,x
-call comphornerk(aa,10,a,9,x)
-print*,x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ! Pour tous les ordres jusqu'à num_steps, la procédure exporte les tableaux de Butcher associés aux méthodes de Gauss-Legendre.
-
-Pleg = 0
-Pleg(0,0) = 1
-Pleg(1,1) = 1
 
 Proots = 0
 
 do i=2,num_steps
     
-    print*, "Computing polynomials of degree",i
+    print*, "Computing roots of degree",i
     
-    ! Computes Legendre polynomial
-    Pleg(0,modulo(i,3)) = (- (i-1))*Pleg(0,modulo(i-2,3)) / i
-    do j=1,i
-        Pleg(j,modulo(i,3)) = ((2*i-1)*Pleg(j-1,modulo(i-1,3)) - (i-1)*Pleg(j,modulo(i-2,3))) / i
-    end do
-    
-    ! Computes its roots
-    
-    print*, "Computing roots"
+    ! Computes roots of Legendre polynomials
     
     do j=1,i
         if (j .eq. 1) then
@@ -113,8 +20,7 @@ do i=2,num_steps
             b = Proots(j  ,modulo(i-1,2))
         end if
         
-!~         call findpolyroot_sec(Pleg(0:i,modulo(i,3)),i,a,b,Proots(j,modulo(i,2)))
-        call findpolyroot_dichot(Pleg(0:i,modulo(i,3)),i,a,b,Proots(j,modulo(i,2)))
+        call findplegroot_dichot(i,a,b,Proots(j,modulo(i,2)))
 
     end do
     
@@ -123,7 +29,7 @@ do i=2,num_steps
     print*, "Computing weights"
     
     do j=1,i
-        call polyeval_horner( Pleg(0:(i-1),modulo(i-1,3)) ,i-1 ,Proots(j,modulo(i,2)), Lwei(j))
+        call evalpleg(i-1,Proots(j,modulo(i,2)),Lwei(j))
         Lwei(j) = i*Lwei(j)
         Lwei(j) = 2*(1 - Proots(j,modulo(i,2))*Proots(j,modulo(i,2)))/(Lwei(j)*Lwei(j))
     end do
@@ -143,6 +49,8 @@ do i=2,num_steps
     ! calcul de a 
     
     print*, "Computing a"
+    
+    ! This is the slow part. Optimized, but the algo is O(n**4), so ... very bad
     
     do j=1,i
         do k=1,i
