@@ -1,7 +1,7 @@
 ! Paramètres
 
 integer                 , parameter                     :: real_kind = 8        ! Precision du calcul
-
+integer                 , parameter                     :: numthreads = 1       ! Number of CPU threads to be used by OpenMP
 character(len=*)        , parameter                     :: butchtablefilename = &
     './input/methods/implicit/gauss_butch_table 10prec16.txt'
 !~     './input/methods/explicit/kutta_3_8th_table.txt'
@@ -10,7 +10,7 @@ real (kind = real_kind) , parameter                     :: errsummax = 1d-17    
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 0.0001        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 0.1        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
@@ -28,8 +28,8 @@ real (kind = real_kind) , parameter                     :: pi = &
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
 real (kind = real_kind) , parameter                     :: dx2min = 1d-4       ! Minimum square distance before collision
 
-real (kind = real_kind) , parameter                     :: tf = 1000             ! End of simulation time
-real (kind = real_kind) , parameter                     :: dto = 1d-1            ! Output time step
+real (kind = real_kind) , parameter                     :: tf = 100000             ! End of simulation time
+real (kind = real_kind) , parameter                     :: dto = 1d3            ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
 ! Tableaux statiques

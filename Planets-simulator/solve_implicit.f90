@@ -13,9 +13,11 @@ implcvgd = .false.
 nit = 0
 
 do while (.not. implcvgd )
-    
+
     ! zxi1 => zxi2
-    
+	
+    !$omp parallel default(private) shared(xi,mi,vi,zxi1,kvi,ns,nb)	
+    !$omp do    
     do i=1,ns
         xinow = xi + zxi1(:,:,i)
         
@@ -41,7 +43,9 @@ do while (.not. implcvgd )
             kvi(:,k,i) = dvnow
         end do    
     end do
-        
+    !$omp end do
+    !$omp end parallel
+
     do i=1,ns
         kxi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)
         do j=2,ns
@@ -52,7 +56,8 @@ do while (.not. implcvgd )
     zxi2 = zxi0 + dt2 * kxi
     
     ! zxi2 => zxi1
-    
+    !$omp parallel default(private) shared(xi,mi,vi,zxi2,kvi,ns,nb)	
+    !$omp do        
     do i=1,ns
         xinow = xi + zxi2(:,:,i)
         
@@ -78,6 +83,8 @@ do while (.not. implcvgd )
             kvi(:,k,i) = dvnow
         end do    
     end do
+    !$omp end do
+    !$omp end parallel
         
     do i=1,ns
         kxi(:,:,i) = a_butch2(i,1)*kvi(:,:,1)

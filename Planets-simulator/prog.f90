@@ -1,3 +1,7 @@
+! Sets the number of threads to be created by OpenMP
+
+!$ call omp_set_num_threads(numthreads)
+
 ! Read method coefficients
 call readbutchertable(butchtablefilename,a_butch,b_butch,c_butch,ns)
 
