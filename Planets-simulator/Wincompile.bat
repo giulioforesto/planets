@@ -1,0 +1,1 @@
+C:\MinGW\bin\gfortran.exe main.f90 -o main.exe -fimplicit-none -Ofast -march=native -fwhole-program
