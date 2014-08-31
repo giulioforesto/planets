@@ -75,17 +75,17 @@ subroutine readinitstate(filename,mi,xi,vi,n)
 
 end subroutine
 
-subroutine writeinitstate(iounit,t,mi,xi,vi,nb)
+subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
     real (kind=real_kind)   , allocatable   , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
     real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
+    real (kind=real_kind)                                       , intent(in)    :: nrj      ! Energy of the system
     integer                                                     , intent(in)    :: nb       ! Number of bodies
     
     character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
-    real (kind=real_kind)                                                       :: nrj
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
     write(iounit,'(A)',advance='no') ",'x':{"
@@ -115,8 +115,6 @@ subroutine writeinitstate(iounit,t,mi,xi,vi,nb)
     write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
     write(iounit,'(E18.12,A)',advance='no')    mi(nb),"}"
 
-    call compute_energy(mi,xi,vi,nb,nrj)
-
     write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
 
     write(iounit,'(A)')    "}"
@@ -124,18 +122,17 @@ subroutine writeinitstate(iounit,t,mi,xi,vi,nb)
 end subroutine
 
 
-subroutine writecurrentstate_nomasschange(iounit,t,mi,xi,vi,nb)
+subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
-    real (kind=real_kind)   , allocatable   , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
-    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
+    real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi       ! Position of bodies
     integer                                                     , intent(in)    :: nb       ! Number of bodies
-    
+    real (kind=real_kind)                                       , intent(in)    :: nrj      ! Energy of the system
     
     character (len=4)                                                           :: varnum
     integer                                                                     :: i,j
-    real (kind=real_kind)                                                       :: nrj
+
 
     write(iounit,'(A,E18.12)',advance='no') "{'t':",t
     write(iounit,'(A)',advance='no') ",'x':{"
@@ -154,8 +151,6 @@ subroutine writecurrentstate_nomasschange(iounit,t,mi,xi,vi,nb)
         write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
     end do
     write(iounit,'(E18.12,A)',advance='no')    xi(nd,nb),"]}"
-
-    call compute_energy(mi,xi,vi,nb,nrj)
 
     write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
     

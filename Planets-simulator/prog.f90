@@ -34,7 +34,7 @@ end if
 
 t = 0
 dt = dtinit
-
+nrjoff = 0
 
 allocate(fijnow(nd,nb,nb))
 allocate(xinow(nd,nb))
@@ -60,7 +60,9 @@ end if
 t_o = 0
 open(unit = outiounit, file = trim(outputfilename), access='sequential', action='write',position='rewind')
 
-call writeinitstate(outiounit,t,mi,xi,vi,nb)
+
+call compute_energy(mi,xi,vi,nb,nrj)
+call writeinitstate(outiounit,t,mi,xi,vi,nrj,nb)
 
 ! Main loop
 
@@ -85,10 +87,12 @@ do while (t < tf)
     ! Write output
     
     if (t > t_o + dto) then
-        call writecurrentstate_nomasschange(outiounit,t,mi,xi,vi,nb)
+        call compute_energy(mi,xi,vi,nb,nrj)
+        nrj = nrj + nrjoff
+        call writecurrentstate_nomasschange(outiounit,t,xi,nrj,nb)
         t_o = t
         
-        print*,'t=',t
+        print*,'t=',t,'H=',nrj
         
     end if
     

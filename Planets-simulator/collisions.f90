@@ -1,5 +1,6 @@
 ! Detects and deals with collisions
 
+call compute_energy(mi,xi,vi,nb,nrj)
 
 ! Computes all distances
 
@@ -85,7 +86,11 @@ do k=1,nb-1
             
             ! Write state to output file
             
-            call writeinitstate(outiounit,t,mi,xi,vi,nb)
+            call compute_energy(mi,xi,vi,nb,nrjnew)
+            
+            nrjoff = nrj - nrjnew
+            
+            call writeinitstate(outiounit,t,mi,xi,vi,nrj,nb)
 
         end if
         
