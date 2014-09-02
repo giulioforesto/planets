@@ -10,13 +10,13 @@ int[] DIMENSIONS;
 
 int[] origin;
 float timeRatio = 1; // s / time
-float timeOrigin = 0; // for rewind and fast forward
+long timeOrigin = 0; // ms. for rewind and fast forward
 float scaleRatio = 20; // px / dist
 
 JSONObject currentDataFrame;
 
 boolean paused = false;
-int pauseTime;
+long pauseTime;
 
 File inputFile;
 BufferedReader reader;
@@ -162,14 +162,14 @@ void setup() {
   getData(); // TODO condition to "replay mode"
   
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
-  timeOrigin = millis()/1000;
+  timeOrigin = millis();
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
   
   if (!paused) {
-    currentDataFrame = Data.getNextAtTime((millis()/1000 - timeOrigin) / timeRatio);
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / (1000 * timeRatio));
   }
   
   if (currentDataFrame != null) {
@@ -194,7 +194,7 @@ void keyPressed() {
         paused = true;
         pauseTime = millis();
       } else {
-        timeOrigin += (millis() - pauseTime)/1000;
+        timeOrigin += (millis() - pauseTime);
         paused = false;
       }
       break;
