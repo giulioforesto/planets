@@ -4,13 +4,13 @@ import java.io.InputStreamReader;
 
 int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
-int MASS_DISPLAY_RATIO = 10; // pxDiam / mass
+float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int[] DIMENSIONS;
 
 int[] origin;
 float timeRatio = 1; // s / time
 float timeOrigin = 0; // for rewind and fast forward
-int scaleRatio = 300; // px / dist
+int scaleRatio = 20; // px / dist
 
 File inputFile;
 BufferedReader reader;
@@ -139,7 +139,7 @@ void display(JSONObject dataFrame) {
 }
 
 void display(float[] coords, float mass, color planetColor) {
-  int diameter = floor(mass * MASS_DISPLAY_RATIO); // scale planets diameters?
+  int diameter = floor(sqrt(mass) * MASS_TO_DIAMETER_RATIO * sqrt(scaleRatio)); // sqrt is to reduce the size gaps due to huge mass differences and distances between planets
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
   fill(planetColor);
