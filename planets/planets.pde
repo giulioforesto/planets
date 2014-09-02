@@ -28,6 +28,8 @@ static class Data { // TODO Put in new file
   public static JSONObject getNextAtTime(float time) {
     while (cursor < data.size()) {
       JSONObject dataFrame = data.getJSONObject(cursor);
+      cursor++;
+      
       if (dataFrame.hasKey("m")) {
         currentMasses = dataFrame.getJSONObject("m");
       }
@@ -35,7 +37,6 @@ static class Data { // TODO Put in new file
       if (dataFrame.getInt("t") > time) {
         return dataFrame;
       }
-      cursor++;
     }
     return null;
   }
@@ -146,7 +147,7 @@ void display(float[] coords, float mass, color planetColor) {
 }
 
 void setup() {
-  DIMENSIONS = new int[] {displayWidth, displayHeight};
+  DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   
   frameRate(FRAME_RATE_PARAM);
