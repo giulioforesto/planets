@@ -148,7 +148,6 @@ void display(float[] coords, float mass, color planetColor) {
 
 void setup() {
   DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
-  origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
@@ -156,6 +155,7 @@ void setup() {
   
   getData(); // TODO condition to "replay mode"
   
+  origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   timeOrigin = millis()/1000;
 }
 
@@ -170,6 +170,11 @@ void draw() {
 
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
-  scaleRatio *= 1 + e/10;
+  scaleRatio *= 1 - e/10;
+}
+
+void mouseDragged() {
+  origin[0] += mouseX - pmouseX;
+  origin[1] += mouseY - pmouseY;
 }
 
