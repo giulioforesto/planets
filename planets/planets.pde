@@ -1,6 +1,7 @@
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.io.InputStreamReader;
+import java.awt.event.KeyEvent;
 
 int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
@@ -11,6 +12,11 @@ int[] origin;
 float timeRatio = 1; // s / time
 float timeOrigin = 0; // for rewind and fast forward
 float scaleRatio = 20; // px / dist
+
+JSONObject currentDataFrame;
+
+boolean paused = false;
+int pauseTime;
 
 File inputFile;
 BufferedReader reader;
@@ -161,10 +167,13 @@ void setup() {
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
-
-  JSONObject nextDataFrame = Data.getNextAtTime((millis()/1000 - timeOrigin) / timeRatio);
-  if (nextDataFrame != null) {
-    display(nextDataFrame);
+  
+  if (!paused) {
+    currentDataFrame = Data.getNextAtTime((millis()/1000 - timeOrigin) / timeRatio);
+  }
+  
+  if (currentDataFrame != null) {
+    display(currentDataFrame);
   }
 }
 
@@ -177,4 +186,19 @@ void mouseDragged() {
   origin[0] += mouseX - pmouseX;
   origin[1] += mouseY - pmouseY;
 }
+
+void keyPressed() {
+  switch (key) {
+    case 32: // SPACE: pause
+      if (!paused) {
+        paused = true;
+        pauseTime = millis();
+      } else {
+        timeOrigin += (millis() - pauseTime)/1000;
+        paused = false;
+      }
+      break;
+  }
+}
+
 
