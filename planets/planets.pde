@@ -10,7 +10,7 @@ int[] DIMENSIONS;
 int[] origin;
 float timeRatio = 1; // s / time
 float timeOrigin = 0; // for rewind and fast forward
-int scaleRatio = 20; // px / dist
+float scaleRatio = 20; // px / dist
 
 File inputFile;
 BufferedReader reader;
@@ -166,5 +166,10 @@ void draw() {
   if (nextDataFrame != null) {
     display(nextDataFrame);
   }
+}
+
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  scaleRatio *= 1 + e/10;
 }
 
