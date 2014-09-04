@@ -28,7 +28,7 @@ real (kind = real_kind) , parameter                     :: pi = &
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
 real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
 
-real (kind = real_kind) , parameter                     :: tf = 1000             ! End of simulation time
+real (kind = real_kind) , parameter                     :: tf = 5             ! End of simulation time
 real (kind = real_kind) , parameter                     :: dto = 1d-1           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 

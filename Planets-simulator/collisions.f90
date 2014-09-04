@@ -4,8 +4,12 @@ call compute_energy(mi,xi,vi,nb,nrj)
 
 ! Computes all distances
 
-do k=1,nb-1
-    do l=k+1,nb
+k=0
+do while (k<nb-1)
+    k=k+1
+    l=k
+    do while (l<nb)
+        l=l+1
         dxnow = xi(:,l) - xi(:,k)
         dxnow2 = dxnow(1)*dxnow(1)
         do p=2,nd
