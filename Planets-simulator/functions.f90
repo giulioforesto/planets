@@ -75,13 +75,14 @@ subroutine readinitstate(filename,mi,xi,vi,n)
 
 end subroutine
 
-subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,nb)
+subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,postoid,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
     real (kind=real_kind)   , allocatable   , dimension(:)      , intent(in)    :: mi       ! Mass of bodies
     real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi,vi    ! Position and velocity of bodies
     real (kind=real_kind)                                       , intent(in)    :: nrj      ! Energy of the system
+    integer                 , allocatable   , dimension(:)      , intent(in)    :: postoid  ! ID of bodies
     integer                                                     , intent(in)    :: nb       ! Number of bodies
     
     character (len=4)                                                           :: varnum
@@ -91,14 +92,14 @@ subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,nb)
     write(iounit,'(A)',advance='no') ",'x':{"
     
     do i=1,nb-1
-        write(varnum,'(I4.4)') i
+        write(varnum,'(I4.4)') postoid(i)
         write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
         do j=1,nd-1
             write(iounit,'(E18.12,A)',advance='no')    xi(j,i),","
         end do
         write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"],"
     end do
-    write(varnum,'(I4.4)') nb
+    write(varnum,'(I4.4)') postoid(nb)
     write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
     do j=1,nd-1
         write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
@@ -107,27 +108,28 @@ subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,nb)
 
     write(iounit,'(A)',advance='no') "'m':{"
     do i=1,nb-1
-        write(varnum,'(I4.4)') i
+        write(varnum,'(I4.4)') postoid(i)
         write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
         write(iounit,'(E18.12,A)',advance='no')    mi(i),","
     end do
-    write(varnum,'(I4.4)') nb
+    write(varnum,'(I4.4)') postoid(nb)
     write(iounit,'(A,A,A)',advance='no') "'",varnum,"':"
     write(iounit,'(E18.12,A)',advance='no')    mi(nb),"}"
 
     write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
 
-    write(iounit,'(A)')    "}"
+    write(iounit,'(A)')    "},"
 
 end subroutine
 
 
-subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,nb)
+subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,postoid,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
     real (kind=real_kind)                                       , intent(in)    :: t        ! Current time
     real (kind=real_kind)   , allocatable   , dimension(:,:)    , intent(in)    :: xi       ! Position of bodies
     integer                                                     , intent(in)    :: nb       ! Number of bodies
+    integer                 , allocatable   , dimension(:)      , intent(in)    :: postoid  ! ID of bodies
     real (kind=real_kind)                                       , intent(in)    :: nrj      ! Energy of the system
     
     character (len=4)                                                           :: varnum
@@ -138,14 +140,14 @@ subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,nb)
     write(iounit,'(A)',advance='no') ",'x':{"
     
     do i=1,nb-1
-        write(varnum,'(I4.4)') i
+        write(varnum,'(I4.4)') postoid(i)
         write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
         do j=1,nd-1
             write(iounit,'(E18.12,A)',advance='no')    xi(j,i),","
         end do
         write(iounit,'(E18.12,A)',advance='no')    xi(nd,i),"],"
     end do
-    write(varnum,'(I4.4)') nb
+    write(varnum,'(I4.4)') postoid(nb)
     write(iounit,'(A,A,A)',advance='no') "'",varnum,"':["
     do j=1,nd-1
         write(iounit,'(E18.12,A)',advance='no')    xi(j,nb),","
@@ -154,7 +156,7 @@ subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,nb)
 
     write(iounit,'(A,E18.12)',advance='no') ",'H':",nrj
     
-    write(iounit,'(A)')    "}"
+    write(iounit,'(A)')    "},"
 
 end subroutine
 

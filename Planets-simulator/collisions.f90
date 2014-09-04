@@ -20,23 +20,27 @@ do k=1,nb-1
             vi(:,k) = (mi(k)*vi(:,k) + mi(l)*vi(:,l))/(mi(k) + mi(l))
             mi(k) = mi(k) + mi(l)
 
-
+            postoid(k) = currentid
+            currentid = currentid + 1
 
             ! Creates backup
 
             allocate(mib(nb-1))
             allocate(xib(nd,nb-1))
             allocate(vib(nd,nb-1))
+            allocate(postoidb(nb-1))
 
             do p=1,l-1
                 mib(p) = mi(p)
                 xib(:,p) = xi(:,p)
                 vib(:,p) = vi(:,p)
+                postoidb(p) = postoid(p)
             end do
             do p=l+1,nb
                 mib(p-1) = mi(p)
                 xib(:,p-1) = xi(:,p)
                 vib(:,p-1) = vi(:,p)
+                postoidb(p-1) = postoid(p)
             end do
 
             ! Two planets have fused
@@ -48,7 +52,8 @@ do k=1,nb-1
             deallocate(mi)
             deallocate(xi)
             deallocate(vi)
-
+            
+            deallocate(postoid)
             deallocate(fijnow)
             deallocate(xinow)
             deallocate(kxi)
@@ -61,7 +66,8 @@ do k=1,nb-1
             end if
 
             ! Reallocation of arrays
-
+            
+            allocate(postoid(nb))
             allocate(fijnow(nd,nb,nb))
             allocate(xinow(nd,nb))
             allocate(kxi(nd,nb,ns))
@@ -79,10 +85,12 @@ do k=1,nb-1
             mi = mib
             xi = xib
             vi = vib
+            postoid = postoidb
             
             deallocate(mib)
             deallocate(xib)
             deallocate(vib)
+            deallocate(postoidb)
             
             ! Write state to output file
             
@@ -90,7 +98,7 @@ do k=1,nb-1
             
             nrjoff = nrj - nrjnew
             
-            call writeinitstate(outiounit,t,mi,xi,vi,nrj,nb)
+            call writeinitstate(outiounit,t,mi,xi,vi,nrj,postoid,nb)
 
         end if
         

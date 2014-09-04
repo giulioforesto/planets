@@ -40,11 +40,17 @@ t = 0
 dt = dtinit
 nrjoff = 0
 
+allocate(postoid(nb))
 allocate(fijnow(nd,nb,nb))
 allocate(xinow(nd,nb))
 allocate(kxi(nd,nb,ns))
 allocate(kvi(nd,nb,ns))
 allocate(vinow(nd,nb))
+
+do i=1,nb
+    postoid(i) = i
+end do
+currentid = nb+1
 
 if (.not. explicitRK) then
     
@@ -63,10 +69,10 @@ end if
 
 t_o = 0
 open(unit = outiounit, file = trim(outputfilename), access='sequential', action='write',position='rewind')
-
+write(outiounit,'(A)')    "["
 
 call compute_energy(mi,xi,vi,nb,nrj)
-call writeinitstate(outiounit,t,mi,xi,vi,nrj,nb)
+call writeinitstate(outiounit,t,mi,xi,vi,nrj,postoid,nb)
 
 ! Main loop
 
@@ -93,10 +99,10 @@ do while (t < tf)
     if (t > t_o + dto) then
         call compute_energy(mi,xi,vi,nb,nrj)
         nrj = nrj + nrjoff
-        call writecurrentstate_nomasschange(outiounit,t,xi,nrj,nb)
+        call writecurrentstate_nomasschange(outiounit,t,xi,nrj,postoid,nb)
         t_o = t
         
-        print*,'t=',t,'H=',nrj
+        print*,'t=',t,'H=',nrj,'nb=',nb
         
     end if
     
@@ -106,4 +112,5 @@ do while (t < tf)
     
 end do
 
+write(outiounit,'(A)')    "]"
 close(outiounit)

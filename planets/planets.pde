@@ -1,16 +1,22 @@
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.io.InputStreamReader;
+import java.awt.event.KeyEvent;
 
 int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
-int MASS_DISPLAY_RATIO = 10; // pxDiam / mass
+float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int[] DIMENSIONS;
 
 int[] origin;
 float timeRatio = 1; // s / time
-float timeOrigin = 0; // for rewind and fast forward
-int scaleRatio = 300; // px / dist
+long timeOrigin = 0; // ms. for rewind and fast forward
+float scaleRatio = 20; // px / dist
+
+JSONObject currentDataFrame;
+
+boolean paused = true;
+long pauseTime;
 
 File inputFile;
 BufferedReader reader;
@@ -28,6 +34,8 @@ static class Data { // TODO Put in new file
   public static JSONObject getNextAtTime(float time) {
     while (cursor < data.size()) {
       JSONObject dataFrame = data.getJSONObject(cursor);
+      cursor++;
+      
       if (dataFrame.hasKey("m")) {
         currentMasses = dataFrame.getJSONObject("m");
       }
@@ -35,7 +43,6 @@ static class Data { // TODO Put in new file
       if (dataFrame.getInt("t") > time) {
         return dataFrame;
       }
-      cursor++;
     }
     return null;
   }
@@ -138,7 +145,7 @@ void display(JSONObject dataFrame) {
 }
 
 void display(float[] coords, float mass, color planetColor) {
-  int diameter = floor(mass * MASS_DISPLAY_RATIO); // scale planets diameters?
+  int diameter = floor(sqrt(mass) * MASS_TO_DIAMETER_RATIO * sqrt(scaleRatio)); // sqrt is to reduce the size gaps due to huge mass differences and distances between planets
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
   fill(planetColor);
@@ -146,8 +153,7 @@ void display(float[] coords, float mass, color planetColor) {
 }
 
 void setup() {
-  DIMENSIONS = new int[] {displayWidth, displayHeight};
-  origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
+  DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
@@ -155,15 +161,44 @@ void setup() {
   
   getData(); // TODO condition to "replay mode"
   
-  timeOrigin = millis()/1000;
+  origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
+  timeOrigin = millis();
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
-
-  JSONObject nextDataFrame = Data.getNextAtTime((millis()/1000 - timeOrigin) / timeRatio);
-  if (nextDataFrame != null) {
-    display(nextDataFrame);
+  
+  if (!paused) {
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / (1000 * timeRatio));
+  }
+  
+  if (currentDataFrame != null) {
+    display(currentDataFrame);
   }
 }
+
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  scaleRatio *= 1 - e/10;
+}
+
+void mouseDragged() {
+  origin[0] += mouseX - pmouseX;
+  origin[1] += mouseY - pmouseY;
+}
+
+void keyPressed() {
+  switch (key) {
+    case 32: // SPACE: pause
+      if (!paused) {
+        paused = true;
+        pauseTime = millis();
+      } else {
+        timeOrigin += (millis() - pauseTime);
+        paused = false;
+      }
+      break;
+  }
+}
+
 

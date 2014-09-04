@@ -10,26 +10,26 @@ real (kind = real_kind) , parameter                     :: errsummax = 1d-17    
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 0.1        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 0.001        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
-integer                 , parameter                     :: nbinit = 10          ! Initial number of bodies to create.
+integer                 , parameter                     :: nbinit = 20          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
 character(len=*)        , parameter                     :: initstatefilename = &
-    './input/init_states/init_test_circle.txt'
+    './input/init_states/init_test_crash.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
 real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
-real (kind = real_kind) , parameter                     :: dx2min = 1d-4       ! Minimum square distance before collision
+real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
 
-real (kind = real_kind) , parameter                     :: tf = 100000             ! End of simulation time
-real (kind = real_kind) , parameter                     :: dto = 1d3            ! Output time step
+real (kind = real_kind) , parameter                     :: tf = 1000             ! End of simulation time
+real (kind = real_kind) , parameter                     :: dto = 1d-1           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
 ! Tableaux statiques
@@ -46,7 +46,8 @@ integer                                                     :: ns               
 real (kind = real_kind) , allocatable   , dimension(:)      :: mi               ! Masses of bodies
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xi,vi            ! Positions and velocities of bodies
 integer                                                     :: nb               ! Number of bodies
-
+integer                 , allocatable   , dimension(:)      :: postoid, postoidb! Position of bodies in the arrays => Unique ID number
+integer                                                     :: currentid
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate Runge-Kutta stages for positions and velocities
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: zxi0,zxi1,zxi2   ! Intermediate implicit Runge-Kutta stages for positions and velocities
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xinow,vinow      ! Intermediate position and velocity
