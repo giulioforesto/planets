@@ -13,22 +13,22 @@ integer                 , parameter                     :: nd = 2               
 real (kind = real_kind) , parameter                     :: dtinit = 0.001        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
-logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
-integer                 , parameter                     :: nbinit = 20          ! Initial number of bodies to create.
+logical                 , parameter                     :: loadinitstate = .false. ! Loads initial state from file or creates a random one
+integer                 , parameter                     :: nbinit = 200          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
 character(len=*)        , parameter                     :: initstatefilename = &
-    './input/init_states/init_test_crash.txt'
+    './input/init_states/init_test_circle.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
-real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
+real (kind = real_kind) , parameter                     :: Guniv = 1e-1                 ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
 real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
 
-real (kind = real_kind) , parameter                     :: tf = 5             ! End of simulation time
+real (kind = real_kind) , parameter                     :: tf = 50             ! End of simulation time
 real (kind = real_kind) , parameter                     :: dto = 1d-1           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 

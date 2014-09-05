@@ -10,10 +10,11 @@ call init_random_seed()
 
 do i=1,nb
 
-    ! Distributes masses logarithmically
-    call random_number(nran)
-    b = -log(nran)
-    mi(i) =  b*mmaxinit
+!~     ! Distributes masses logarithmically
+!~     call random_number(nran)
+!~     b = -log(nran)
+!~     mi(i) =  b*mmaxinit
+    mi(i) =  mmaxinit
 
     ! Distributes position uniformly
     do q=1,nd

@@ -17,7 +17,9 @@ do while (k<nb-1)
         end do
         
         if (dxnow2 < dx2min) then
-        
+            
+            call compute_energy(mi,xi,vi,nb,nrj)
+            
             ! Averages velocities and position, sums mass
 
             xi(:,k) = (mi(k)*xi(:,k) + mi(l)*xi(:,l))/(mi(k) + mi(l))
@@ -100,7 +102,7 @@ do while (k<nb-1)
             
             call compute_energy(mi,xi,vi,nb,nrjnew)
             
-            nrjoff = nrj - nrjnew
+            nrjoff = nrjoff  + nrj - nrjnew
             
             call writeinitstate(outiounit,t,mi,xi,vi,nrj,postoid,nb)
 
