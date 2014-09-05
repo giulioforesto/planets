@@ -42,7 +42,7 @@ void getLiveData() {
     }
     
     JSONArray buffer = new JSONArray();
-    int insertTime = dataFrame.getInt("t");
+    float insertTime = dataFrame.getFloat("t");
     while (insertTime > Data.lastTime) {
       buffer.append(dataFrame);
       line = reader.readLine();
@@ -51,7 +51,7 @@ void getLiveData() {
       } else {
         break;
       }
-      insertTime = dataFrame.getInt("t");
+      insertTime = dataFrame.getFloat("t");
     }
     reader.close();
   
@@ -67,7 +67,7 @@ void getLiveData() {
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
   timeOrigin = millis();
-  currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio); // First frame paused
+  currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
 }
 
 void getData() {
@@ -132,7 +132,7 @@ void draw() {
   // getLiveData(); // TODO condition to "live mode"
   
   if (!paused) {
-    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio);
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
   }
   
   if (currentDataFrame != null) {
