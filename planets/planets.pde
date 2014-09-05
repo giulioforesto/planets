@@ -1,4 +1,3 @@
-import java.util.TreeMap;
 import java.util.Iterator;
 import java.io.InputStreamReader;
 import java.awt.event.KeyEvent;
@@ -15,47 +14,11 @@ float scaleRatio = 20; // px / dist
 
 JSONObject currentDataFrame;
 
-boolean paused = true;
+boolean paused = false;
 long pauseTime;
 
 File inputFile;
 BufferedReader reader;
-
-static class Data { // TODO Put in new file
-  private static JSONArray data = new JSONArray();
-  
-  public static JSONObject currentMasses = new JSONObject();
-  public static TreeMap<String,Integer> currentColors = new TreeMap<String,Integer>();
-
-  public static int cursor = 0;
-  
-  public static int lastTime;
-  
-  public static JSONObject getNextAtTime(float time) {
-    while (cursor < data.size()) {
-      JSONObject dataFrame = data.getJSONObject(cursor);
-      cursor++;
-      
-      if (dataFrame.hasKey("m")) {
-        currentMasses = dataFrame.getJSONObject("m");
-      }
-      
-      if (dataFrame.getInt("t") > time) {
-        return dataFrame;
-      }
-    }
-    return null;
-  }
-  
-  public static void add(JSONObject dataFrame) {
-    data.append(dataFrame);
-    lastTime = dataFrame.getInt("t");
-  }
-  
-  public static void setData(JSONArray inputData) {
-    data = inputData;
-  }
-}
 
 color randomColor() {
   int r = floor(random(256));
@@ -177,11 +140,21 @@ void draw() {
   }
 }
 
+/*
+ * ZOOM
+ */
 void mouseWheel(MouseEvent event) {
-  float e = event.getCount();
-  scaleRatio *= 1 - e/10;
+  if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
+    // TODO Implement this
+  } else { // Zoom
+    float e = event.getCount();
+    scaleRatio *= 1 - e/10;
+  }
 }
 
+/**
+ * NAVIGATION
+ */
 void mouseDragged() {
   origin[0] += mouseX - pmouseX;
   origin[1] += mouseY - pmouseY;
@@ -200,5 +173,3 @@ void keyPressed() {
       break;
   }
 }
-
-
