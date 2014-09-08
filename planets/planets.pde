@@ -1,6 +1,5 @@
 import java.util.Iterator;
 import java.io.InputStreamReader;
-import java.awt.event.KeyEvent;
 
 int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
@@ -143,6 +142,12 @@ void draw() {
   if (currentDataFrame != null) {
     display(currentDataFrame);
   }
+  
+  if (paused) {
+    textSize(30);
+    fill(0);
+    text("Paused", 10, 40);
+  }
 }
 
 /*
@@ -152,11 +157,8 @@ void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
     float var = 1 + e/10;
-    println(timeOrigin);
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
-    println(timeOrigin);
     timeRatio *= var;
-    println(timeRatio);
   } else { // Zoom
     scaleRatio *= 1 - e/10;
   }
@@ -183,3 +185,4 @@ void keyPressed() {
       break;
   }
 }
+
