@@ -185,7 +185,7 @@ void keyPressed() {
     case 32: // SPACE: pause
       if (!paused) {
         paused = true;
-        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time
+        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time: should be the same as currentDataFrame.getFloat("t");
       } else {
         timeOrigin = floor(millis() - pauseTime*timeRatio);
         paused = false;
@@ -196,6 +196,17 @@ void keyPressed() {
       break;
     case 45: // -: zoom out
       scaleRatio *= 0.9;
+      break;
+    case CODED:
+      switch (keyCode) {
+        case RIGHT: // next frame
+        case LEFT: // prev frame
+          if (paused) {
+            newDataFrame = Data.getNextDataFrame(keyCode-38); // keyCode is 37 (LEFT) or 39 (RIGHT)
+            pauseTime = newDataFrame.getFloat("t");
+          }
+          break;
+      }
       break;
   }
 }
