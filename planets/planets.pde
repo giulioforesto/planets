@@ -151,9 +151,10 @@ void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
     float var = 1 + e/10;
-    timeOrigin = floor(millis() * (1-1/var) + timeOrigin/var);
+    println(timeOrigin);
+    timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
+    println(timeOrigin);
     timeRatio *= var;
-    println(e);
     println(timeRatio);
   } else { // Zoom
     scaleRatio *= 1 - e/10;
