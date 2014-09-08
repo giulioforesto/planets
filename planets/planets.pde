@@ -8,14 +8,15 @@ float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int[] DIMENSIONS;
 
 int[] origin;
-float timeRatio = 1; // s / time
+float timeRatio = 500; // ms / time
 long timeOrigin = 0; // ms. for rewind and fast forward
 float scaleRatio = 20; // px / dist
 
 JSONObject currentDataFrame;
+JSONObject newDataFrame;
 
-boolean paused = false;
-long pauseTime;
+boolean paused = true;
+float pauseTime = 0;
 
 File inputFile;
 BufferedReader reader;
@@ -43,7 +44,7 @@ void getLiveData() {
     }
     
     JSONArray buffer = new JSONArray();
-    int insertTime = dataFrame.getInt("t");
+    float insertTime = dataFrame.getFloat("t");
     while (insertTime > Data.lastTime) {
       buffer.append(dataFrame);
       line = reader.readLine();
@@ -52,7 +53,7 @@ void getLiveData() {
       } else {
         break;
       }
-      insertTime = dataFrame.getInt("t");
+      insertTime = dataFrame.getFloat("t");
     }
     reader.close();
   
@@ -67,6 +68,8 @@ void getLiveData() {
 
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
+  timeOrigin = millis();
+  newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
 }
 
 void getData() {
@@ -125,16 +128,18 @@ void setup() {
   getData(); // TODO condition to "replay mode"
   
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
-  timeOrigin = millis();
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
   
   if (!paused) {
-    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / (1000 * timeRatio));
+    newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
   }
   
+  if (newDataFrame != null) {
+    currentDataFrame = newDataFrame;
+  }
   if (currentDataFrame != null) {
     display(currentDataFrame);
   }
@@ -144,10 +149,15 @@ void draw() {
  * ZOOM
  */
 void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
-    // TODO Implement this
+    float var = 1 + e/10;
+    println(timeOrigin);
+    timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
+    println(timeOrigin);
+    timeRatio *= var;
+    println(timeRatio);
   } else { // Zoom
-    float e = event.getCount();
     scaleRatio *= 1 - e/10;
   }
 }
@@ -165,9 +175,9 @@ void keyPressed() {
     case 32: // SPACE: pause
       if (!paused) {
         paused = true;
-        pauseTime = millis();
+        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time
       } else {
-        timeOrigin += (millis() - pauseTime);
+        timeOrigin = floor(millis() - pauseTime*timeRatio);
         paused = false;
       }
       break;
