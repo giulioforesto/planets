@@ -32,6 +32,11 @@ public static class Data {
     return null;
   }
   
+  public static JSONObject getNextDataFrame(int dir) {
+    cursor = min(max(cursor + dir, 0), data.size());
+    return data.getJSONObject(cursor);
+  }
+  
   public static void add(JSONObject dataFrame) {
     data.append(dataFrame);
     lastTime = dataFrame.getFloat("t");

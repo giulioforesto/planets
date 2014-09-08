@@ -4,10 +4,12 @@ import java.io.InputStreamReader;
 int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
 float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
+int MIN_PLANET_SIZE = 2;
+int MAX_PLANET_SIZE = 20;
 int[] DIMENSIONS;
 
 int[] origin;
-float timeRatio = 500; // ms / time
+float timeRatio = 300; // ms / time
 long timeOrigin = 0; // ms. for rewind and fast forward
 float scaleRatio = 20; // px / dist
 
@@ -110,7 +112,13 @@ void display(JSONObject dataFrame) {
 }
 
 void display(float[] coords, float mass, color planetColor) {
-  int diameter = floor(sqrt(mass) * MASS_TO_DIAMETER_RATIO * sqrt(scaleRatio)); // sqrt is to reduce the size gaps due to huge mass differences and distances between planets
+  int diameter = min(
+    max(
+      floor(sqrt(mass) * MASS_TO_DIAMETER_RATIO * sqrt(scaleRatio)), // sqrt is to reduce the size gaps due to huge mass differences and distances between planets
+      MIN_PLANET_SIZE
+    ),
+    MAX_PLANET_SIZE
+  );
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
   fill(planetColor);
@@ -177,10 +185,27 @@ void keyPressed() {
     case 32: // SPACE: pause
       if (!paused) {
         paused = true;
-        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time
+        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time: should be the same as currentDataFrame.getFloat("t");
       } else {
         timeOrigin = floor(millis() - pauseTime*timeRatio);
         paused = false;
+      }
+      break;
+    case 43: // +: zoom in
+      scaleRatio *= 1.1;
+      break;
+    case 45: // -: zoom out
+      scaleRatio *= 0.9;
+      break;
+    case CODED:
+      switch (keyCode) {
+        case RIGHT: // next frame
+        case LEFT: // prev frame
+          if (paused) {
+            newDataFrame = Data.getNextDataFrame(keyCode-38); // keyCode is 37 (LEFT) or 39 (RIGHT)
+            pauseTime = newDataFrame.getFloat("t");
+          }
+          break;
       }
       break;
   }
