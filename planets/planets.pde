@@ -168,7 +168,12 @@ void mouseWheel(MouseEvent event) {
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
     timeRatio *= var;
   } else { // Zoom
-    scaleRatio *= 1 - e/10;
+    float var = 1 - e/10;
+    
+    origin[0] = floor(var*origin[0] + (1-var)*mouseX);
+    origin[1] = floor(var*origin[1] + (1-var)*mouseY);
+    
+    scaleRatio *= var;
   }
 }
 
