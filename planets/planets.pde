@@ -7,11 +7,12 @@ float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int[] DIMENSIONS;
 
 int[] origin;
-float timeRatio = 1000; // ms / time
+float timeRatio = 500; // ms / time
 long timeOrigin = 0; // ms. for rewind and fast forward
 float scaleRatio = 20; // px / dist
 
 JSONObject currentDataFrame;
+JSONObject newDataFrame;
 
 boolean paused = true;
 float pauseTime = 0;
@@ -67,7 +68,7 @@ void getLiveData() {
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
   timeOrigin = millis();
-  currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
+  newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
 }
 
 void getData() {
@@ -132,9 +133,12 @@ void draw() {
   // getLiveData(); // TODO condition to "live mode"
   
   if (!paused) {
-    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+    newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
   }
   
+  if (newDataFrame != null) {
+    currentDataFrame = newDataFrame;
+  }
   if (currentDataFrame != null) {
     display(currentDataFrame);
   }
@@ -146,7 +150,9 @@ void draw() {
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
-    timeRatio *= 1 + e/10;
+    float var = 1 + e/10;
+    timeOrigin = floor(millis() * (1-1/var) + timeOrigin/var);
+    timeRatio *= var;
     println(e);
     println(timeRatio);
   } else { // Zoom
