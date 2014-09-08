@@ -183,6 +183,12 @@ void keyPressed() {
         paused = false;
       }
       break;
+    case 43: // +: zoom in
+      scaleRatio *= 1.1;
+      break;
+    case 45: // -: zoom out
+      scaleRatio *= 0.9;
+      break;
   }
 }
 
