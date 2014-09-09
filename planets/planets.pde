@@ -112,6 +112,7 @@ void display(JSONObject dataFrame) {
 }
 
 void display(float[] coords, float mass, color planetColor) {
+  noStroke();
   int diameter = min(
     max(
       floor(sqrt(mass) * MASS_TO_DIAMETER_RATIO * sqrt(scaleRatio)), // sqrt is to reduce the size gaps due to huge mass differences and distances between planets
@@ -126,18 +127,22 @@ void display(float[] coords, float mass, color planetColor) {
 }
 
 void drawGrid() {
-  strokeWeight(3);
-  for (int i = 2; i >= 0; i--) {
-    int delta = floor(256 * (1/pow(2,i)) * scaleRatio/DEFAULT_SCALE_RATIO);
-    fill(0, delta);
-    int x = 0;
-    int y = 0;
-    while(x*scaleRatio < width/2 || y*scaleRatio < height/2) {
+  for (int i = 0; i < 3; i++) {
+    float delta = pow(2,i);
+    int alpha = floor(128 * pow(2,i)/4 * scaleRatio/(4*DEFAULT_SCALE_RATIO)); // 128 constant and 4 factor to DEFAULT_SCALE_RATIO are empirical
+    stroke(0, alpha);
+    float x = 0;
+    float y = 0;
+    while(origin[0] + x*scaleRatio < width
+        || origin[0] - x*scaleRatio > 0 
+        || origin[1] + y*scaleRatio < height
+        || origin[1] - y*scaleRatio > 0) {
+      println(origin[0] + x*scaleRatio);
       line(origin[0] + x*scaleRatio, -5, origin[0] + x*scaleRatio, height+5);
       line(origin[0] - x*scaleRatio, -5, origin[0] - x*scaleRatio, height+5);
       x += delta;
-      line(origin[1] + y*scaleRatio, -5, origin[1] + y*scaleRatio, width+5);
-      line(origin[1] - y*scaleRatio, -5, origin[1] - y*scaleRatio, width+5);
+      line(-5, origin[1] + y*scaleRatio, width+5, origin[1] + y*scaleRatio);
+      line(-5, origin[1] - y*scaleRatio, width+5, origin[1] - y*scaleRatio);
       y += delta;
     }
   }
@@ -148,7 +153,6 @@ void setup() {
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
-  noStroke();
   
   getData(); // TODO condition to "replay mode"
   
