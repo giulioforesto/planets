@@ -5,13 +5,15 @@ int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
 float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int MIN_PLANET_SIZE = 2;
-int MAX_PLANET_SIZE = 20;
+int MAX_PLANET_SIZE = 40;
 int[] DIMENSIONS;
+float DEFAULT_TIME_RATIO = 300; // ms / time
+float DEFAULT_SCALE_RATIO = 20; // px / dist
 
 int[] origin;
-float timeRatio = 300; // ms / time
+float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
-float scaleRatio = 20; // px / dist
+float scaleRatio = DEFAULT_SCALE_RATIO;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
@@ -77,9 +79,7 @@ void getData() {
   selectInput("Select source file:", "fileSelected");
 }
 
-void display(JSONObject dataFrame) {
-  background(255,255,255);
-  
+void display(JSONObject dataFrame) {  
   JSONObject positions = dataFrame.getJSONObject("x");
   
   Iterator<String> keys = positions.keys().iterator();
@@ -125,6 +125,24 @@ void display(float[] coords, float mass, color planetColor) {
   ellipse(x, y, diameter, diameter);
 }
 
+void drawGrid() {
+  strokeWeight(3);
+  for (int i = 2; i >= 0; i--) {
+    int delta = floor(256 * (1/pow(2,i)) * scaleRatio/DEFAULT_SCALE_RATIO);
+    fill(0, delta);
+    int x = 0;
+    int y = 0;
+    while(x*scaleRatio < width/2 || y*scaleRatio < height/2) {
+      line(origin[0] + x*scaleRatio, -5, origin[0] + x*scaleRatio, height+5);
+      line(origin[0] - x*scaleRatio, -5, origin[0] - x*scaleRatio, height+5);
+      x += delta;
+      line(origin[1] + y*scaleRatio, -5, origin[1] + y*scaleRatio, width+5);
+      line(origin[1] - y*scaleRatio, -5, origin[1] - y*scaleRatio, width+5);
+      y += delta;
+    }
+  }
+}
+
 void setup() {
   DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   
@@ -140,6 +158,10 @@ void setup() {
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
   
+  background(255,255,255);
+  
+  drawGrid();
+  
   if (!paused) {
     newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
   }
@@ -152,9 +174,15 @@ void draw() {
   }
   
   if (paused) {
-    textSize(30);
+    textSize(20);
     fill(0);
-    text("Paused", 10, 40);
+    text("Paused", 10, 30);
+  }
+  
+  if (timeRatio != DEFAULT_TIME_RATIO) {
+    textSize(20);
+    fill(0);
+    text("Speed: " + floor(DEFAULT_TIME_RATIO*100/timeRatio) + "%", 10, 60);
   }
 }
 
@@ -167,8 +195,17 @@ void mouseWheel(MouseEvent event) {
     float var = 1 + e/10;
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
     timeRatio *= var;
+    
+    if (DEFAULT_TIME_RATIO/timeRatio > 0.95 && DEFAULT_TIME_RATIO/timeRatio < 1.05) {
+      timeRatio = DEFAULT_TIME_RATIO;
+    }
   } else { // Zoom
-    scaleRatio *= 1 - e/10;
+    float var = 1 - e/10;
+    
+    origin[0] = floor(var*origin[0] + (1-var)*mouseX);
+    origin[1] = floor(var*origin[1] + (1-var)*mouseY);
+    
+    scaleRatio *= var;
   }
 }
 
