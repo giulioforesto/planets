@@ -5,11 +5,12 @@ int FRAME_RATE_PARAM = 30;
 String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
 float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
 int MIN_PLANET_SIZE = 2;
-int MAX_PLANET_SIZE = 20;
+int MAX_PLANET_SIZE = 40;
 int[] DIMENSIONS;
+float DEFAULT_TIME_RATIO = 300; // ms / time
 
 int[] origin;
-float timeRatio = 300; // ms / time
+float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
 float scaleRatio = 20; // px / dist
 
@@ -152,9 +153,16 @@ void draw() {
   }
   
   if (paused) {
-    textSize(30);
+    textSize(20);
     fill(0);
-    text("Paused", 10, 40);
+    text("Paused", 10, 30);
+  }
+  
+  int speedRatio = round(DEFAULT_TIME_RATIO*100/timeRatio);
+  if (speedRatio < 99 || speedRatio > 101) {
+    textSize(20);
+    fill(0);
+    text("Speed: " + speedRatio + "%", 10, 60);
   }
 }
 
@@ -167,6 +175,10 @@ void mouseWheel(MouseEvent event) {
     float var = 1 + e/10;
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
     timeRatio *= var;
+    
+    if (DEFAULT_TIME_RATIO/timeRatio > 0.95 && DEFAULT_TIME_RATIO/timeRatio < 1.05) {
+      timeRatio = DEFAULT_TIME_RATIO;
+    }
   } else { // Zoom
     float var = 1 - e/10;
     
