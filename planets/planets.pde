@@ -1,19 +1,21 @@
+import controlP5.*;
+
 import java.util.Iterator;
 import java.io.InputStreamReader;
 
-int FRAME_RATE_PARAM = 30;
-String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
+int FRAME_RATE_PARAM = 30; // fps
+String INPUT_FILE_ABSOLUTE_PATH = "outfile.json"; // for live mode
 float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
-int MIN_PLANET_SIZE = 2;
-int MAX_PLANET_SIZE = 40;
+int MIN_PLANET_SIZE = 2; // px
+int MAX_PLANET_SIZE = 40; // px
 int[] DIMENSIONS;
 float DEFAULT_TIME_RATIO = 300; // ms / time
 float DEFAULT_SCALE_RATIO = 20; // px / dist
 
 int[] origin;
+float scaleRatio = DEFAULT_SCALE_RATIO;
 float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
-float scaleRatio = DEFAULT_SCALE_RATIO;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
