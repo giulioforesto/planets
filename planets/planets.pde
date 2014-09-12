@@ -1,19 +1,21 @@
+import controlP5.*;
+
 import java.util.Iterator;
 import java.io.InputStreamReader;
 
-int FRAME_RATE_PARAM = 30;
-String INPUT_FILE_ABSOLUTE_PATH = "outfile.json";
+int FRAME_RATE_PARAM = 30; // fps
+String INPUT_FILE_ABSOLUTE_PATH = "outfile.json"; // for live mode
 float MASS_TO_DIAMETER_RATIO = 1; // pxDiam / mass
-int MIN_PLANET_SIZE = 2;
-int MAX_PLANET_SIZE = 40;
+int MIN_PLANET_SIZE = 2; // px
+int MAX_PLANET_SIZE = 40; // px
 int[] DIMENSIONS;
 float DEFAULT_TIME_RATIO = 300; // ms / time
 float DEFAULT_SCALE_RATIO = 20; // px / dist
 
 int[] origin;
+float scaleRatio = DEFAULT_SCALE_RATIO;
 float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
-float scaleRatio = DEFAULT_SCALE_RATIO;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
@@ -23,6 +25,8 @@ float pauseTime = 0;
 
 File inputFile;
 BufferedReader reader;
+
+Disclaimer disclaimer = new Disclaimer();
 
 color randomColor() {
   int r = floor(random(256));
@@ -79,7 +83,7 @@ void getData() {
   selectInput("Select source file:", "fileSelected");
 }
 
-void display(JSONObject dataFrame) {  
+void display(JSONObject dataFrame) {
   JSONObject positions = dataFrame.getJSONObject("x");
   
   Iterator<String> keys = positions.keys().iterator();
@@ -137,7 +141,6 @@ void drawGrid() {
         || origin[0] - x*scaleRatio > 0 
         || origin[1] + y*scaleRatio < height
         || origin[1] - y*scaleRatio > 0) {
-      println(origin[0] + x*scaleRatio);
       line(origin[0] + x*scaleRatio, -5, origin[0] + x*scaleRatio, height+5);
       line(origin[0] - x*scaleRatio, -5, origin[0] - x*scaleRatio, height+5);
       x += delta;
@@ -177,17 +180,7 @@ void draw() {
     display(currentDataFrame);
   }
   
-  if (paused) {
-    textSize(20);
-    fill(0);
-    text("Paused", 10, 30);
-  }
-  
-  if (timeRatio != DEFAULT_TIME_RATIO) {
-    textSize(20);
-    fill(0);
-    text("Speed: " + floor(DEFAULT_TIME_RATIO*100/timeRatio) + "%", 10, 60);
-  }
+  disclaimer.display();
 }
 
 /*
