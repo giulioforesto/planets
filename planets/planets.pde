@@ -23,10 +23,15 @@ JSONObject newDataFrame;
 boolean paused = true;
 float pauseTime = 0;
 
+boolean enableGrid = true;
+
 File inputFile;
 BufferedReader reader;
 
 Disclaimer disclaimer = new Disclaimer();
+
+ControlP5 cp5;
+CheckBox checkBoxSet;
 
 color randomColor() {
   int r = floor(random(256));
@@ -101,7 +106,7 @@ void display(JSONObject dataFrame) {
       planetMass = Data.currentMasses.getFloat(objectKey);
     } else {
       planetMass = 1;
-      println("Error: No mass for planet " + objectKey);
+      println("Warning: No mass for planet " + objectKey + " at time: " + dataFrame.getFloat("t"));
     }
     
     if (Data.currentColors.containsKey(objectKey)) {
@@ -160,14 +165,31 @@ void setup() {
   getData(); // TODO condition to "replay mode"
   
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
+  
+  cp5 = new ControlP5(this);
+  Group menu = cp5.addGroup("menu")
+    .setPosition(width - 300, 10)
+    .setWidth(300)
+    .activateEvent(true)
+    .setBackgroundColor(color(100,80))
+    .setBackgroundHeight(100)
+    .setLabel("Menu")
+    .close()
+    ;            
+  checkBoxSet = cp5.addSlider("S-1")
+    .setPosition(80,10)
+    .setSize(180,9)
+    .setGroup(menu)
+    ;
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
   
   background(255,255,255);
-  
-  drawGrid();
+  if (enableGrid) {
+    drawGrid();
+  }
   
   if (!paused) {
     newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
