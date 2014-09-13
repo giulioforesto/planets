@@ -53,6 +53,7 @@ integer                                                     :: currentid
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: kxi,kvi          ! Intermediate Runge-Kutta stages for positions and velocities
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: zxi0,zxi1,zxi2   ! Intermediate implicit Runge-Kutta stages for positions and velocities
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xinow,vinow      ! Intermediate position and velocity
+real (kind = real_kind) , allocatable   , dimension(:,:)    :: xieft,vieft      ! Residual position and velocity for compensated EFT operations
 real (kind = real_kind) , allocatable   , dimension(:,:,:)  :: fijnow           ! Intermediate reciprocal forces 
 
 logical                                                     :: implcvgd         ! Convergence of implicit iterations
@@ -67,6 +68,7 @@ real (kind = real_kind)                                     :: errsum           
 
 real (kind = real_kind) , allocatable   , dimension(:)      :: mib              ! Mass buffer in case of collision
 real (kind = real_kind) , allocatable   , dimension(:,:)    :: xib,vib          ! Position and velocity buffers in case of collision
+real (kind = real_kind) , allocatable   , dimension(:,:)    :: xieftb,vieftb    ! Position and velocity residuals buffers in case of collision
 
 real (kind = real_kind)                                     :: nran             ! Random number
 real (kind = real_kind)                                     :: nrj, nrjoff , nrjnew ! Energies

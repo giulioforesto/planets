@@ -179,20 +179,10 @@ subroutine eft_incrsum(y,d,e)       ! cf Geometric numerical integration - 2005 
         real (kind = real_kind_eft) , intent(inout)     :: e
         
         real (kind = real_kind_eft)                     :: a
-        
-!~         print*,'1'
-!~         print*,'y',y
-!~         print*,'d',d
-!~         print*,'e',e
-        
+
         a = y
         e = e + d
         y = a + e
         e = e + (a - y)
-        
-!~         print*,'2'
-!~         print*,'y',y
-!~         print*,'d',d
-!~         print*,'e',e
-        
+
 end subroutine

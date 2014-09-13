@@ -46,5 +46,16 @@ do j=2,ns
     vinow = vinow + b_butch(j)*kvi(:,:,j)
 end do
 
-xi = xi + dt*xinow
-vi = vi + dt*vinow
+if (useeft) then
+    
+    do i=1,nd
+        do j=1,nb
+            call eft_incrsum(xi(i,j),dt*xinow(i,j),xieft(i,j))
+            call eft_incrsum(vi(i,j),dt*vinow(i,j),vieft(i,j))
+        end do
+    end do
+
+else
+    xi = xi + dt*xinow
+    vi = vi + dt*vinow
+end if
