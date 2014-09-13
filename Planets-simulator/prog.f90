@@ -37,6 +37,7 @@ end if
 ! Set memory and variables up
 
 t = 0
+teft = 0
 dt = dtinit
 nrjoff = 0
 
@@ -92,7 +93,12 @@ do while (t < tf)
     
     ! Update current time
     
-    t = t + dt
+    if (useeft) then
+        call eft_incrsum(t,dt,teft)
+    else
+        t = t + dt
+    end if
+    
     
     ! Write output
     

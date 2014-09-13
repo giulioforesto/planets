@@ -1,6 +1,17 @@
+FC=gfortran
+
+#~ FEFTFLAGS=-O3 -fimplicit-none
+FEFTFLAGS=-fbounds-check -fbacktrace -fimplicit-none
+
+#~ FFLAGS=-fimplicit-none -Ofast
+FFLAGS=-fbounds-check -fbacktrace -fimplicit-none
+
+EFTDIR = ./eftlib
+EFTLIB = eftlib8
+
 all:
 
-	#~ gfortran main.f90 -o main.exe -fbounds-check -fbacktrace -fimplicit-none
-	gfortran main.f90 -o main.exe -fimplicit-none -Ofast -march=native -fwhole-program
+	$(FC) -c $(EFTDIR)/$(EFTLIB).f90 $(FEFTFLAGS) -o $(EFTDIR)/$(EFTLIB).o
 	
-	#~ time ./main.exe
+	$(FC)  main.f90 -o main.exe $(FFLAGS) $(EFTDIR)/$(EFTLIB).o
+	

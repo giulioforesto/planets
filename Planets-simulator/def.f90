@@ -9,11 +9,13 @@ logical                 , parameter                     :: explicitRK = .false. 
 real (kind = real_kind) , parameter                     :: errsummax = 1d-17    ! Maximum difference between two iterations of implicit method
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
+logical                 , parameter                     :: useeft = .false. ! Uses error-free transformations for compensated summations
+
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 0.001        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 1d-3        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
-logical                 , parameter                     :: loadinitstate = .false. ! Loads initial state from file or creates a random one
+logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
 integer                 , parameter                     :: nbinit = 200          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
@@ -29,7 +31,7 @@ real (kind = real_kind) , parameter                     :: fpow = -1            
 real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
 
 real (kind = real_kind) , parameter                     :: tf = 50             ! End of simulation time
-real (kind = real_kind) , parameter                     :: dto = 1d-1           ! Output time step
+real (kind = real_kind) , parameter                     :: dto = 1d-1 - 1d-5           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
 ! Tableaux statiques
@@ -57,6 +59,7 @@ logical                                                     :: implcvgd         
 integer                                                     :: nit              ! Number of implicit iterations
 
 real (kind = real_kind)                                     :: t,dt,dt2         ! Current time, time step and squared time step
+real (kind = real_kind)                                     :: teft             ! Residual time for compensated EFT operations
 real (kind = real_kind)                                     :: t_o              ! Last output time
 real (kind = real_kind)                                     :: mtot             ! Total mass of the system
 real (kind = real_kind)                                     :: dxnow2           ! Square distance between two bodies
