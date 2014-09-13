@@ -9,7 +9,7 @@ logical                 , parameter                     :: explicitRK = .false. 
 real (kind = real_kind) , parameter                     :: errsummax = 1d-17    ! Maximum difference between two iterations of implicit method
 integer                 , parameter                     :: maxit = 10           ! Maximum number of iterations in the implicit system
 
-logical                 , parameter                     :: useeft = .false. ! Uses error-free transformations for compensated summations
+logical                 , parameter                     :: useeft = .true. ! Uses error-free transformations for compensated summations
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
 real (kind = real_kind) , parameter                     :: dtinit = 1d-3        ! Inital time step
@@ -24,7 +24,7 @@ character(len=*)        , parameter                     :: initstatefilename = &
     './input/init_states/init_test_circle.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
-real (kind = real_kind) , parameter                     :: Guniv = 1e-1                 ! Universal gravitational constant
+real (kind = real_kind) , parameter                     :: Guniv = 1d0                 ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
