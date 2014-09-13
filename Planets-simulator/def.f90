@@ -15,8 +15,8 @@ integer                 , parameter                     :: nd = 2               
 real (kind = real_kind) , parameter                     :: dtinit = 1d-3        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
-logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
-integer                 , parameter                     :: nbinit = 200          ! Initial number of bodies to create.
+logical                 , parameter                     :: loadinitstate = .false. ! Loads initial state from file or creates a random one
+integer                 , parameter                     :: nbinit = 20          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass

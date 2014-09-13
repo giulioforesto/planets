@@ -44,14 +44,17 @@ nrjoff = 0
 allocate(postoid(nb))
 allocate(fijnow(nd,nb,nb))
 allocate(xinow(nd,nb))
-allocate(xieft(nd,nb))
 allocate(kxi(nd,nb,ns))
 allocate(kvi(nd,nb,ns))
 allocate(vinow(nd,nb))
-allocate(vieft(nd,nb))
 
-xieft = 0
-vieft = 0
+
+if (useeft) then
+    allocate(xieft(nd,nb))
+    allocate(vieft(nd,nb))
+    xieft = 0
+    vieft = 0
+end if
 
 do i=1,nb
     postoid(i) = i

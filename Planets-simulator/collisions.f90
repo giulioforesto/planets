@@ -34,25 +34,32 @@ do while (k<nb-1)
             allocate(mib(nb-1))
             allocate(xib(nd,nb-1))
             allocate(vib(nd,nb-1))
-            allocate(xieftb(nd,nb-1))
-            allocate(vieftb(nd,nb-1))
             allocate(postoidb(nb-1))
+            
+            if (useeft) then
+                allocate(xieftb(nd,nb-1))
+                allocate(vieftb(nd,nb-1))
+            end if
 
             do p=1,l-1
                 mib(p) = mi(p)
                 xib(:,p) = xi(:,p)
                 vib(:,p) = vi(:,p)
-                xieftb(:,p) = xieft(:,p)
-                vieftb(:,p) = vieft(:,p)
                 postoidb(p) = postoid(p)
+                if (useeft) then
+                    xieftb(:,p) = xieft(:,p)
+                    vieftb(:,p) = vieft(:,p)
+                end if
             end do
             do p=l+1,nb
                 mib(p-1) = mi(p)
                 xib(:,p-1) = xi(:,p)
                 vib(:,p-1) = vi(:,p)
-                xieftb(:,p-1) = xieft(:,p)
-                vieftb(:,p-1) = vieft(:,p)
                 postoidb(p-1) = postoid(p)
+                if (useeft) then
+                    xieftb(:,p-1) = xieft(:,p)
+                    vieftb(:,p-1) = vieft(:,p)
+                end if
             end do
 
             ! Two planets have fused
@@ -68,11 +75,15 @@ do while (k<nb-1)
             deallocate(postoid)
             deallocate(fijnow)
             deallocate(xinow)
-            deallocate(xieft)
             deallocate(kxi)
             deallocate(kvi)
             deallocate(vinow)
-            deallocate(vieft)
+            
+            if (useeft) then
+                deallocate(vieft)
+                deallocate(xieft)
+            end if
+                        
             if (.not. explicitRK) then
                 deallocate(zxi0)    
                 deallocate(zxi1)
@@ -84,11 +95,14 @@ do while (k<nb-1)
             allocate(postoid(nb))
             allocate(fijnow(nd,nb,nb))
             allocate(xinow(nd,nb))
-            allocate(xieft(nd,nb))
             allocate(kxi(nd,nb,ns))
             allocate(kvi(nd,nb,ns))
             allocate(vinow(nd,nb))
-            allocate(vieft(nd,nb))
+            
+            if (useeft) then
+                allocate(xieft(nd,nb))
+                allocate(vieft(nd,nb))
+            end if
 
             if (.not. explicitRK) then
                 allocate(zxi0(nd,nb,ns))    
@@ -101,17 +115,22 @@ do while (k<nb-1)
             mi = mib
             xi = xib
             vi = vib
-            xieft = xieftb
-            vieft = vieftb
-            
             postoid = postoidb
+            
+            if (useeft) then
+                xieft = xieftb
+                vieft = vieftb
+            end if
             
             deallocate(mib)
             deallocate(xib)
             deallocate(vib)
-            deallocate(xieftb)
-            deallocate(vieftb)
             deallocate(postoidb)
+            
+            if (useeft) then
+                deallocate(xieftb)
+                deallocate(vieftb)
+            end if
             
             ! Write state to output file
             
