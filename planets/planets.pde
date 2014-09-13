@@ -31,7 +31,7 @@ BufferedReader reader;
 Disclaimer disclaimer = new Disclaimer();
 
 ControlP5 cp5;
-CheckBox checkBoxSet;
+CheckBox enableGridCheckbox;
 
 color randomColor() {
   int r = floor(random(256));
@@ -171,15 +171,23 @@ void setup() {
     .setPosition(width - 300, 10)
     .setWidth(300)
     .activateEvent(true)
-    .setBackgroundColor(color(100,80))
+    .setBackgroundColor(color(100, 110))
     .setBackgroundHeight(100)
     .setLabel("Menu")
     .close()
     ;            
-  checkBoxSet = cp5.addSlider("S-1")
-    .setPosition(80,10)
-    .setSize(180,9)
-    .setGroup(menu)
+  enableGridCheckbox = cp5.addCheckBox("enableGridCheckbox")
+    .setGroup("menu")
+    .setPosition(10, 10)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setSize(10, 10)
+    .setItemsPerRow(1)
+    .setSpacingColumn(30)
+    .setSpacingRow(10)
+    .addItem("Enable grid", 0) // Internal value is not used
+    .toggle(0)
     ;
 }
 
@@ -264,6 +272,12 @@ void keyPressed() {
           break;
       }
       break;
+  }
+}
+
+void controlEvent(ControlEvent event) {
+  if (event.isFrom(enableGridCheckbox)){
+    enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
   }
 }
 
