@@ -6,7 +6,7 @@ public static class Data {
   public static JSONObject currentMasses = new JSONObject();
   public static TreeMap<String,Integer> currentColors = new TreeMap<String,Integer>();
 
-  public static int cursor = 0;
+  private static int cursor = 0;
   
   public static float lastTime;
   
@@ -44,5 +44,13 @@ public static class Data {
   
   public static void setData(JSONArray inputData) {
     data = inputData;
+  }
+  
+  public static float getMaxTime() {
+    return data.getJSONObject(data.size()-1).getFloat("t");
+  }
+  
+  public static void resetCursor() {
+    cursor = 0;
   }
 }

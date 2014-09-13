@@ -16,6 +16,7 @@ int[] origin;
 float scaleRatio = DEFAULT_SCALE_RATIO;
 float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
+float maxTime;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
@@ -32,6 +33,7 @@ Disclaimer disclaimer = new Disclaimer();
 
 ControlP5 cp5;
 CheckBox enableGridCheckbox;
+Slider timeline;
 
 color randomColor() {
   int r = floor(random(256));
@@ -82,6 +84,8 @@ void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
   timeOrigin = millis();
   newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
+  
+  timeline.setRange(0, Data.getMaxTime()*DEFAULT_TIME_RATIO/1000); // s
 }
 
 void getData() {
@@ -183,11 +187,14 @@ void setup() {
     .setColorActive(color(255))
     .setColorLabel(color(255))
     .setSize(10, 10)
-    .setItemsPerRow(1)
-    .setSpacingColumn(30)
-    .setSpacingRow(10)
     .addItem("Enable grid", 0) // Internal value is not used
     .toggle(0)
+    ;
+  timeline = cp5.addSlider("timeline")
+    .setPosition(0, height-10)
+    .setWidth(width)
+    .setValue(0)
+    .setSliderMode(Slider.FLEXIBLE)
     ;
 }
 
@@ -205,6 +212,7 @@ void draw() {
   
   if (newDataFrame != null) {
     currentDataFrame = newDataFrame;
+    timeline.setValue(currentDataFrame.getFloat("t")*DEFAULT_TIME_RATIO/1000);
   }
   if (currentDataFrame != null) {
     display(currentDataFrame);
@@ -242,6 +250,18 @@ void mouseWheel(MouseEvent event) {
 void mouseDragged() {
   origin[0] += mouseX - pmouseX;
   origin[1] += mouseY - pmouseY;
+}
+
+void timeline(float time) {
+  if (timeline.isMousePressed()) {
+    Data.resetCursor();
+    timeOrigin = floor(millis() - time*1000*timeRatio/DEFAULT_TIME_RATIO);
+    if (paused) {
+      pauseTime = time*1000/DEFAULT_TIME_RATIO;
+    }
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+    newDataFrame = null;
+  }
 }
 
 void keyPressed() {
