@@ -32,6 +32,7 @@ Disclaimer disclaimer = new Disclaimer();
 
 ControlP5 cp5;
 CheckBox enableGridCheckbox;
+Slider timeSpeedSlider;
 Slider timeline;
 Textlabel maxTimeLabel;
 
@@ -162,6 +163,16 @@ void drawGrid() {
   }
 }
 
+void setTimeRatio(float newTimeRatio) {
+  float var = newTimeRatio/timeRatio;
+  timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
+  timeRatio = newTimeRatio;
+  float ratio = DEFAULT_TIME_RATIO/timeRatio;
+  if (ratio > 0.95 && ratio < 1.05) {
+    timeRatio = DEFAULT_TIME_RATIO;
+  }
+}
+
 void setup() {
   DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   
@@ -181,7 +192,7 @@ void setup() {
     .setBackgroundHeight(100)
     .setLabel("Menu")
     .close()
-    ;            
+    ;
   enableGridCheckbox = cp5.addCheckBox("enableGridCheckbox")
     .setGroup("menu")
     .setPosition(10, 10)
@@ -192,6 +203,15 @@ void setup() {
     .addItem("Enable grid", 0) // Internal value is not used
     .toggle(0)
     ;
+  timeSpeedSlider = cp5.addSlider("timeSpeedSlider")
+    .setGroup("menu")
+    .setPosition(10, 30)
+    .setWidth(280)
+    .setRange(0,10)
+    .setValue(DEFAULT_TIME_RATIO/timeRatio)
+    .setSliderMode(Slider.FLEXIBLE)
+    ;
+    
   timeline = cp5.addSlider("timeline")
     .setPosition(0, height-10)
     .setWidth(width)
@@ -226,19 +246,20 @@ void draw() {
 }
 
 /*
- * ZOOM
+ * ZOOM & TIME SPEED
  */
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
     float var = 1 + e/10;
-    timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
-    timeRatio *= var;
-    
-    if (DEFAULT_TIME_RATIO/timeRatio > 0.95 && DEFAULT_TIME_RATIO/timeRatio < 1.05) {
-      timeRatio = DEFAULT_TIME_RATIO;
+    float newTimeRatio = timeRatio*var;
+    if (DEFAULT_TIME_RATIO/newTimeRatio > 0.95 && DEFAULT_TIME_RATIO/newTimeRatio < 1.05) {
+      newTimeRatio = DEFAULT_TIME_RATIO;
     }
-  } else { // Zoom
+    setTimeRatio(newTimeRatio);
+    timeSpeedSlider.setValue(DEFAULT_TIME_RATIO/newTimeRatio);
+  }
+  else { // Zoom
     float var = 1 - e/10;
     
     origin[0] = floor(var*origin[0] + (1-var)*mouseX);
@@ -254,18 +275,6 @@ void mouseWheel(MouseEvent event) {
 void mouseDragged() {
   origin[0] += mouseX - pmouseX;
   origin[1] += mouseY - pmouseY;
-}
-
-void timeline(float time) {
-  if (timeline.isMousePressed()) {
-    Data.resetCursor();
-    timeOrigin = floor(millis() - time*1000*timeRatio/DEFAULT_TIME_RATIO);
-    if (paused) {
-      pauseTime = time*1000/DEFAULT_TIME_RATIO;
-    }
-    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
-    newDataFrame = null;
-  }
 }
 
 void keyPressed() {
@@ -302,6 +311,30 @@ void keyPressed() {
 void controlEvent(ControlEvent event) {
   if (event.isFrom(enableGridCheckbox)){
     enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
+  }
+}
+
+void timeSpeedSlider(float ratio) {
+  if (timeSpeedSlider.isMousePressed()) {
+    if (ratio > 0.95 && ratio < 1.05) {
+      setTimeRatio(DEFAULT_TIME_RATIO);
+      timeSpeedSlider.setValue(1);
+    }
+    else {
+      setTimeRatio(DEFAULT_TIME_RATIO/ratio);
+    }
+  }
+}
+
+void timeline(float time) {
+  if (timeline.isMousePressed()) {
+    Data.resetCursor();
+    timeOrigin = floor(millis() - time*1000*timeRatio/DEFAULT_TIME_RATIO);
+    if (paused) {
+      pauseTime = time*1000/DEFAULT_TIME_RATIO;
+    }
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+    newDataFrame = null;
   }
 }
 
