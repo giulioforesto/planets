@@ -23,10 +23,17 @@ JSONObject newDataFrame;
 boolean paused = true;
 float pauseTime = 0;
 
+boolean enableGrid = true;
+
 File inputFile;
 BufferedReader reader;
 
 Disclaimer disclaimer = new Disclaimer();
+
+ControlP5 cp5;
+CheckBox enableGridCheckbox;
+Slider timeline;
+Textlabel maxTimeLabel;
 
 color randomColor() {
   int r = floor(random(256));
@@ -77,6 +84,10 @@ void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
   timeOrigin = millis();
   newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
+  
+  Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
+  timeline.setRange(0, maxTime); // s
+  maxTimeLabel.setText(maxTime.toString());
 }
 
 void getData() {
@@ -101,7 +112,7 @@ void display(JSONObject dataFrame) {
       planetMass = Data.currentMasses.getFloat(objectKey);
     } else {
       planetMass = 1;
-      println("Error: No mass for planet " + objectKey);
+      println("Warning: No mass for planet " + objectKey + " at time: " + dataFrame.getFloat("t"));
     }
     
     if (Data.currentColors.containsKey(objectKey)) {
@@ -160,14 +171,44 @@ void setup() {
   getData(); // TODO condition to "replay mode"
   
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
+  
+  cp5 = new ControlP5(this);
+  Group menu = cp5.addGroup("menu")
+    .setPosition(width - 300, 10)
+    .setWidth(300)
+    .activateEvent(true)
+    .setBackgroundColor(color(100, 110))
+    .setBackgroundHeight(100)
+    .setLabel("Menu")
+    .close()
+    ;            
+  enableGridCheckbox = cp5.addCheckBox("enableGridCheckbox")
+    .setGroup("menu")
+    .setPosition(10, 10)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setSize(10, 10)
+    .addItem("Enable grid", 0) // Internal value is not used
+    .toggle(0)
+    ;
+  timeline = cp5.addSlider("timeline")
+    .setPosition(0, height-10)
+    .setWidth(width)
+    .setValue(0)
+    .setSliderMode(Slider.FLEXIBLE)
+    ;
+  maxTimeLabel = cp5.addTextlabel("maxTimeLabel")
+    .setPosition(width-30, height-10);
+    ;
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
-  
   background(255,255,255);
-  
-  drawGrid();
+  if (enableGrid) {
+    drawGrid();
+  }
   
   if (!paused) {
     newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
@@ -175,6 +216,7 @@ void draw() {
   
   if (newDataFrame != null) {
     currentDataFrame = newDataFrame;
+    timeline.setValue(currentDataFrame.getFloat("t")*DEFAULT_TIME_RATIO/1000);
   }
   if (currentDataFrame != null) {
     display(currentDataFrame);
@@ -214,6 +256,18 @@ void mouseDragged() {
   origin[1] += mouseY - pmouseY;
 }
 
+void timeline(float time) {
+  if (timeline.isMousePressed()) {
+    Data.resetCursor();
+    timeOrigin = floor(millis() - time*1000*timeRatio/DEFAULT_TIME_RATIO);
+    if (paused) {
+      pauseTime = time*1000/DEFAULT_TIME_RATIO;
+    }
+    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+    newDataFrame = null;
+  }
+}
+
 void keyPressed() {
   switch (key) {
     case 32: // SPACE: pause
@@ -242,6 +296,12 @@ void keyPressed() {
           break;
       }
       break;
+  }
+}
+
+void controlEvent(ControlEvent event) {
+  if (event.isFrom(enableGridCheckbox)){
+    enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
   }
 }
 
