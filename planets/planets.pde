@@ -16,7 +16,6 @@ int[] origin;
 float scaleRatio = DEFAULT_SCALE_RATIO;
 float timeRatio = DEFAULT_TIME_RATIO;
 long timeOrigin = 0; // ms. for rewind and fast forward
-float maxTime;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
@@ -34,6 +33,7 @@ Disclaimer disclaimer = new Disclaimer();
 ControlP5 cp5;
 CheckBox enableGridCheckbox;
 Slider timeline;
+Textlabel maxTimeLabel;
 
 color randomColor() {
   int r = floor(random(256));
@@ -85,7 +85,9 @@ void fileSelected(File file) {
   timeOrigin = millis();
   newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
   
-  timeline.setRange(0, Data.getMaxTime()*DEFAULT_TIME_RATIO/1000); // s
+  Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
+  timeline.setRange(0, maxTime); // s
+  maxTimeLabel.setText(maxTime.toString());
 }
 
 void getData() {
@@ -196,11 +198,13 @@ void setup() {
     .setValue(0)
     .setSliderMode(Slider.FLEXIBLE)
     ;
+  maxTimeLabel = cp5.addTextlabel("maxTimeLabel")
+    .setPosition(width-30, height-10);
+    ;
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
-  
   background(255,255,255);
   if (enableGrid) {
     drawGrid();
