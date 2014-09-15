@@ -1,5 +1,5 @@
 public class Disclaimer {
-  public void display() {
+  public void display(boolean paused, float timeRatio) {
     textSize(20);
     fill(0);
     if (paused) {

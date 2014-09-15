@@ -14,20 +14,16 @@ float DEFAULT_SCALE_RATIO = 20; // px / dist
 
 int[] origin;
 float scaleRatio = DEFAULT_SCALE_RATIO;
-float timeRatio = DEFAULT_TIME_RATIO;
-long timeOrigin = 0; // ms. for rewind and fast forward
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
-
-boolean paused = true;
-float pauseTime = 0;
 
 boolean enableGrid = true;
 
 File inputFile;
 BufferedReader reader;
 
+TimeController timeController = new TimeController();
 Disclaimer disclaimer = new Disclaimer();
 
 ControlP5 cp5;
@@ -43,7 +39,7 @@ color randomColor() {
   return color(r, g, b);
 }
 
-void getLiveData() {
+void getLiveData() { // TODO update according to new architecture
   try {
     inputFile = new File(INPUT_FILE_ABSOLUTE_PATH);
     reader = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(inputFile)));
@@ -83,8 +79,8 @@ void getLiveData() {
 
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
-  timeOrigin = millis();
-  newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio); // First frame paused
+  timeController.resetOrigin();
+  newDataFrame = Data.getNextAtTime(timeController.getTime(), timeController.getDeltaRatio()); // First frame paused
   
   Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
   timeline.setRange(0, maxTime); // s
@@ -163,16 +159,6 @@ void drawGrid() {
   }
 }
 
-void setTimeRatio(float newTimeRatio) {
-  float var = newTimeRatio/timeRatio;
-  timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
-  timeRatio = newTimeRatio;
-  float ratio = DEFAULT_TIME_RATIO/timeRatio;
-  if (ratio > 0.95 && ratio < 1.05) {
-    timeRatio = DEFAULT_TIME_RATIO;
-  }
-}
-
 void setup() {
   DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   
@@ -208,7 +194,7 @@ void setup() {
     .setPosition(10, 30)
     .setWidth(280)
     .setRange(0,10)
-    .setValue(DEFAULT_TIME_RATIO/timeRatio)
+    .setValue(1)
     .setSliderMode(Slider.FLEXIBLE)
     ;
     
@@ -230,8 +216,8 @@ void draw() {
     drawGrid();
   }
   
-  if (!paused) {
-    newDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+  if (!timeController.paused) {
+    newDataFrame = Data.getNextAtTime(timeController.getTime(), timeController.getDeltaRatio());
   }
   
   if (newDataFrame != null) {
@@ -242,7 +228,10 @@ void draw() {
     display(currentDataFrame);
   }
   
-  disclaimer.display();
+  disclaimer.display(
+    timeController.paused,
+    timeController.getTimeRatio()
+  );
 }
 
 /*
@@ -252,11 +241,7 @@ void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (keyPressed && key == CODED && keyCode == CONTROL) { // Time speed
     float var = 1 + e/10;
-    float newTimeRatio = timeRatio*var;
-    if (DEFAULT_TIME_RATIO/newTimeRatio > 0.95 && DEFAULT_TIME_RATIO/newTimeRatio < 1.05) {
-      newTimeRatio = DEFAULT_TIME_RATIO;
-    }
-    setTimeRatio(newTimeRatio);
+    float newTimeRatio = timeController.increaseTimeRatio(var);
     timeSpeedSlider.setValue(DEFAULT_TIME_RATIO/newTimeRatio);
   }
   else { // Zoom
@@ -280,13 +265,7 @@ void mouseDragged() {
 void keyPressed() {
   switch (key) {
     case 32: // SPACE: pause
-      if (!paused) {
-        paused = true;
-        pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time: should be the same as currentDataFrame.getFloat("t");
-      } else {
-        timeOrigin = floor(millis() - pauseTime*timeRatio);
-        paused = false;
-      }
+      timeController.pause();
       break;
     case 43: // +: zoom in
       scaleRatio *= 1.1;
@@ -298,9 +277,9 @@ void keyPressed() {
       switch (keyCode) {
         case RIGHT: // next frame
         case LEFT: // prev frame
-          if (paused) {
+          if (timeController.paused) {
             newDataFrame = Data.getNextDataFrame(keyCode-38); // keyCode is 37 (LEFT) or 39 (RIGHT)
-            pauseTime = newDataFrame.getFloat("t");
+            timeController.setPauseTime(newDataFrame.getFloat("t"));
           }
           break;
       }
@@ -308,7 +287,7 @@ void keyPressed() {
   }
 }
 
-void controlEvent(ControlEvent event) {
+void controlEvent(ControlEvent event) { // Checkbox event
   if (event.isFrom(enableGridCheckbox)){
     enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
   }
@@ -316,12 +295,9 @@ void controlEvent(ControlEvent event) {
 
 void timeSpeedSlider(float ratio) {
   if (timeSpeedSlider.isMousePressed()) {
+    timeController.setTimeRatio(DEFAULT_TIME_RATIO/ratio);
     if (ratio > 0.95 && ratio < 1.05) {
-      setTimeRatio(DEFAULT_TIME_RATIO);
       timeSpeedSlider.setValue(1);
-    }
-    else {
-      setTimeRatio(DEFAULT_TIME_RATIO/ratio);
     }
   }
 }
@@ -329,11 +305,8 @@ void timeSpeedSlider(float ratio) {
 void timeline(float time) {
   if (timeline.isMousePressed()) {
     Data.resetCursor();
-    timeOrigin = floor(millis() - time*1000*timeRatio/DEFAULT_TIME_RATIO);
-    if (paused) {
-      pauseTime = time*1000/DEFAULT_TIME_RATIO;
-    }
-    currentDataFrame = Data.getNextAtTime((millis() - timeOrigin) / timeRatio, FRAME_RATE_PARAM * timeRatio);
+    timeController.jumpAtTime(time);
+    currentDataFrame = Data.getNextAtTime(timeController.getTime(), timeController.getDeltaRatio());
     newDataFrame = null;
   }
 }
