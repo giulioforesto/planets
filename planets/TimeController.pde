@@ -1,6 +1,6 @@
 public class TimeController {
   private float timeRatio = DEFAULT_TIME_RATIO;
-  private long timeOrigin = 0; // ms. for rewind and fast forward
+  private long timeOrigin = millis(); // ms. for rewind and fast forward
   
   public boolean paused = true;
   private float pauseTime = 0;
@@ -49,10 +49,6 @@ public class TimeController {
       timeOrigin = floor(millis() - pauseTime*timeRatio);
       paused = false;
     }
-  }
-  
-  public void resetOrigin() {
-    timeOrigin = millis();
   }
   
   public void jumpAtTime(float time) {

@@ -79,7 +79,7 @@ void getLiveData() { // TODO update according to new architecture
 
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
-  timeController.resetOrigin();
+  timeController = new TimeController();
   newDataFrame = Data.getNextAtTime(timeController.getTime(), timeController.getDeltaRatio()); // First frame paused
   
   Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
@@ -192,10 +192,16 @@ void setup() {
   timeSpeedSlider = cp5.addSlider("timeSpeedSlider")
     .setGroup("menu")
     .setPosition(10, 30)
-    .setWidth(280)
+    .setWidth(270)
     .setRange(0,10)
     .setValue(1)
     .setSliderMode(Slider.FLEXIBLE)
+    ;
+  cp5.addButton("changeSourceFileButton")
+    .setGroup("menu")
+    .setPosition(10,50)
+    .setSize(100,10)
+    .setLabel("Change source file")
     ;
     
   timeline = cp5.addSlider("timeline")
@@ -205,7 +211,7 @@ void setup() {
     .setSliderMode(Slider.FLEXIBLE)
     ;
   maxTimeLabel = cp5.addTextlabel("maxTimeLabel")
-    .setPosition(width-30, height-10);
+    .setPosition(width-30, height-10); // Text is set in fileSelected method
     ;
 }
 
@@ -302,6 +308,13 @@ void timeSpeedSlider(float ratio) {
   }
 }
 
+void changeSourceFileButton(int value) {
+  if (!timeController.paused) {
+    timeController.pause();
+  }
+  getData();
+}
+
 void timeline(float time) {
   if (timeline.isMousePressed()) {
     Data.resetCursor();
@@ -310,4 +323,3 @@ void timeline(float time) {
     newDataFrame = null;
   }
 }
-
