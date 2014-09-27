@@ -2,6 +2,8 @@
 
 program main
 
+    !$ use OMP_LIB
+
     implicit none
     
     include 'def.f90'
@@ -10,7 +12,6 @@ program main
 contains
 
     include 'functions.f90'
-    include 'functions_eft.f90'
     
 end program main
 
