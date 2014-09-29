@@ -44,6 +44,7 @@ public static class Data {
   
   public static void setData(JSONArray inputData) {
     data = inputData;
+    resetCursor();
   }
   
   public static float getMaxTime() {
