@@ -4,7 +4,6 @@ program main
     
     ! Links with OpenMP if available
     !$ use OMP_LIB
-    use eftlib8
 
     implicit none
 
