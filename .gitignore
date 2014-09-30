@@ -1,5 +1,12 @@
 Gauss-method-export/output/*
+Planets-simulator/input/*
 Planets-simulator/output/*
+choreographies/input/*
+choreographies/output/*
+calculator/*
+
+
+
+
 *test_long.txt
 planets/application*
-/choreographies/input/methods/*
