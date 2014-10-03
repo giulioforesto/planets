@@ -23,14 +23,17 @@ do while (.not. implcvgd )
         
         do k=1,nb-1
             do l=k+1,nb
-                dxnow = xinow(:,l) - xinow(:,k)
+                dxnow = xinow(:,k) - xinow(:,l)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
                     dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
                 end do
-                fijnow(:,k,l) = Guniv * dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+!~             fijnow(:,k,l) =  dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+            fijnow(:,k,l) =  dxnow * forceoverdist(dxnow2)
             end do
         end do
+        
+        fijnow = fijnow * Guniv
         
         do k=1,nb
             dvnow = 0
@@ -63,14 +66,17 @@ do while (.not. implcvgd )
         
         do k=1,nb-1
             do l=k+1,nb
-                dxnow = xinow(:,l) - xinow(:,k)
+                dxnow = xinow(:,k) - xinow(:,l)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
                     dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
                 end do
-                fijnow(:,k,l) = Guniv * dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+!~             fijnow(:,k,l) =  dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+            fijnow(:,k,l) =  dxnow * forceoverdist(dxnow2)
             end do
         end do
+        
+        fijnow = fijnow * Guniv
         
         do k=1,nb
             dvnow = 0
@@ -123,14 +129,17 @@ do i=1,ns
 
     do k=1,nb-1
         do l=k,nb
-            dxnow = xinow(:,l) - xinow(:,k)
+            dxnow = xinow(:,k) - xinow(:,l)
             dxnow2 = dxnow(1)*dxnow(1)
             do p=2,nd
                 dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
             end do
-            fijnow(:,k,l) = Guniv * dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+!~             fijnow(:,k,l) =  dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+            fijnow(:,k,l) =  dxnow * forceoverdist(dxnow2)
         end do
     end do
+
+    fijnow= fijnow*Guniv
 
     do k=1,nb
         dvnow = 0

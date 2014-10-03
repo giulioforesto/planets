@@ -12,7 +12,7 @@ integer                 , parameter                     :: maxit = 10           
 logical                 , parameter                     :: useeft = .true. ! Uses error-free transformations for compensated summations
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 1d-3        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 1d-4        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
@@ -24,7 +24,7 @@ character(len=*)        , parameter                     :: initstatefilename = &
     './input/init_states/init_test_crash.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
-real (kind = real_kind) , parameter                     :: Guniv = 1d0                 ! Universal gravitational constant
+real (kind = real_kind) , parameter                     :: Guniv = 1_16                 ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law

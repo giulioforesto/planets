@@ -11,7 +11,8 @@ character(len=*)        , parameter                     :: fourrierimportcoefffi
 character(len=*)        , parameter                     :: fourrierexportcoefffilename = &
     './output/test_cycle_export.txt'
 
-logical                 , parameter                     :: disturbfouriercoeffs = .false.  ! Randomizes arround initial Fourier coefficients
+real(kind=real_kind)    , parameter                     :: maxnfinit = 10                   ! Maximum number of fourier coefficients to be randomly initialized.
+logical                 , parameter                     :: disturbfouriercoeffs = .false.   ! Randomizes arround initial Fourier coefficients
 real(kind=real_kind)    , parameter                     :: disturbcoeff = 0.1_8
 
 

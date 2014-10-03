@@ -210,12 +210,17 @@ subroutine compute_energy(mi,xi,vi,nb,res)
             do i=2,nd
                 temp = temp + dx(i)*dx(i)
             end do
-            pot = pot + mi(k)*mi(l)*(temp**( (fpow)/2 ))
+            pot = pot + mi(k)*mi(l)*potential(temp)
         end do
     end do
     
-    pot = -Guniv*pot
+    pot = Guniv*pot
     
     res = kin + pot
     
 end subroutine
+
+include 'forcemodel.f90'
+
+
+

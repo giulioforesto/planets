@@ -23,7 +23,7 @@ if (.not. (allocated(abf))) then
     do i=1,nd
         do j=1,2
             do k=1,nc
-                do l=1,nf(k)
+                do l=1,max(nf(k),maxnfinit)
                     
                     call random_number(nran)
                     abf(i,j,k,l) = nran
