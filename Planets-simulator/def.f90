@@ -27,7 +27,7 @@ character(len=*)        , parameter                     :: outputfilename = &
 real (kind = real_kind) , parameter                     :: Guniv = 1_16                 ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
-real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
+real (kind = real_kind) , parameter                     :: fpow = 1            ! Power in force law
 real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
 
 real (kind = real_kind) , parameter                     :: tf = 50             ! End of simulation time

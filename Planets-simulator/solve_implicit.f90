@@ -23,7 +23,7 @@ do while (.not. implcvgd )
         
         do k=1,nb-1
             do l=k+1,nb
-                dxnow = xinow(:,k) - xinow(:,l)
+                dxnow = xinow(:,l) - xinow(:,k)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
                     dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
@@ -66,7 +66,7 @@ do while (.not. implcvgd )
         
         do k=1,nb-1
             do l=k+1,nb
-                dxnow = xinow(:,k) - xinow(:,l)
+                dxnow = xinow(:,l) - xinow(:,k)
                 dxnow2 = dxnow(1)*dxnow(1)
                 do p=2,nd
                     dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
@@ -129,7 +129,7 @@ do i=1,ns
 
     do k=1,nb-1
         do l=k,nb
-            dxnow = xinow(:,k) - xinow(:,l)
+            dxnow = xinow(:,l) - xinow(:,k)
             dxnow2 = dxnow(1)*dxnow(1)
             do p=2,nd
                 dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
