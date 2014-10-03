@@ -3,7 +3,7 @@
 integer                 , parameter                     :: real_kind = 8        ! Precision du calcul
 integer                 , parameter                     :: numthreads = 1       ! Number of CPU threads to be used by OpenMP
 character(len=*)        , parameter                     :: butchtablefilename = &
-    './input/methods/implicit/gauss_butch_table 10prec16.txt'
+    './input/methods/implicit/gauss_butch_table 20prec16.txt'
 !~     './input/methods/explicit/kutta_3_8th_table.txt'
 logical                 , parameter                     :: explicitRK = .false. ! If true then the method is treated as expicit, if false, then the method is treated as implicit.
 real (kind = real_kind) , parameter                     :: errsummax = 1d-17    ! Maximum difference between two iterations of implicit method
@@ -12,26 +12,30 @@ integer                 , parameter                     :: maxit = 10           
 logical                 , parameter                     :: useeft = .true. ! Uses error-free transformations for compensated summations
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 1d-4        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 1d-3        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
 logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
-integer                 , parameter                     :: nbinit = 20          ! Initial number of bodies to create.
+integer                 , parameter                     :: nbinit = 50          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
-real (kind = real_kind) , parameter                     :: vmeaninit = 3        ! Initial mean velocity
+real (kind = real_kind) , parameter                     :: vmeaninit = 0        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
 character(len=*)        , parameter                     :: initstatefilename = &
     './input/init_states/init_test_crash.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
-real (kind = real_kind) , parameter                     :: Guniv = 1_16                 ! Universal gravitational constant
+real (kind = real_kind) , parameter                     :: Guniv = 1                 ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944              ! Pi
-real (kind = real_kind) , parameter                     :: fpow = 1            ! Power in force law
-real (kind = real_kind) , parameter                     :: dx2min = 1d-2       ! Minimum square distance before collision
+real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force law
+real (kind = real_kind) , parameter                     :: fpowatt = 2            ! Attraction power in force law
+real (kind = real_kind) , parameter                     :: fpowrep = -1            ! Repulsion power in force law
+real (kind = real_kind) , parameter                     :: repcoeff = 1            ! Repulsion coefficient
+logical                 , parameter                     :: colenabled = .false.   ! Turns collision model on or off
+real (kind = real_kind) , parameter                     :: dx2min = 1d-4       ! Minimum square distance before collision
 
 real (kind = real_kind) , parameter                     :: tf = 50             ! End of simulation time
-real (kind = real_kind) , parameter                     :: dto = 3d-2 - 1d-6           ! Output time step
+real (kind = real_kind) , parameter                     :: dto = 1d-2 - 1d-6           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 
 ! Tableaux statiques
@@ -72,6 +76,7 @@ real (kind = real_kind) , allocatable   , dimension(:,:)    :: xieftb,vieftb    
 
 real (kind = real_kind)                                     :: nran             ! Random number
 real (kind = real_kind)                                     :: nrj, nrjoff , nrjnew ! Energies
+real (kind = real_kind)                                     :: nrjinit ! Energies
 
 
 ! Autres merdes : itérateurs, variables tests ou réutilisables 

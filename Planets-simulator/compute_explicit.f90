@@ -21,7 +21,8 @@ do i=1,ns
             do p=2,nd
                 dxnow2 = dxnow2 + dxnow(p)*dxnow(p)
             end do
-            fijnow(:,k,l) = Guniv * dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+!~             fijnow(:,k,l) =  dxnow * (dxnow2 ** ( (fpow-2)/2 ) )
+            fijnow(:,k,l) =  dxnow * forceoverdist(dxnow2)
         end do
     end do
     

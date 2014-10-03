@@ -82,6 +82,7 @@ write(outiounit,'(A)')    "["
 
 call compute_energy(mi,xi,vi,nb,nrj)
 call writeinitstate(outiounit,t,mi,xi,vi,nrj,postoid,nb)
+nrjinit = nrj
 
 ! Main loop
 
@@ -122,9 +123,12 @@ do while (t < tf)
     
     ! Collision detection
     
-    include "collisions.f90"
-    
+    if (colenabled) then
+        include "collisions.f90"
+    end if
 end do
 
 write(outiounit,'(A)')    "]"
 close(outiounit)
+
+print*,'total relative energy loss over simulation : ', abs(nrjinit - nrj)/nrjinit
