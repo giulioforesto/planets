@@ -32,9 +32,19 @@ public static class Data {
     return null;
   }
   
+  /**
+   * Gets the next or previous data frame.
+   * @param  dir  set to `1` to get the next data frame, `-1` to get the previous
+   * @return  The desired data frame.
+   */
+  
   public static JSONObject getNextDataFrame(int dir) {
     cursor = min(max(cursor + dir, 0), data.size());
     return data.getJSONObject(cursor);
+  }
+  
+  public static JSONObject getDataFrameFromCursor(int distance) {
+    return data.getJSONObject(cursor + distance);
   }
   
   public static void add(JSONObject dataFrame) {
@@ -51,7 +61,15 @@ public static class Data {
     return data.getJSONObject(data.size()-1).getFloat("t");
   }
   
+  public static int getCursor() {
+    return cursor;
+  } 
+  
   public static void resetCursor() {
     cursor = 0;
+  }
+  
+  public static int getSize() {
+    return data.size();
   }
 }
