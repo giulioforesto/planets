@@ -136,9 +136,6 @@ void display(float[] coords, float mass, color planetColor) {
   );
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
-  System.out.print(x);
-  System.out.print(",");
-  System.out.println(y);
   fill(planetColor);
   ellipse(x, y, diameter, diameter);
 }
@@ -162,8 +159,6 @@ void displayTrace() {
     
     Iterator<String> keys = positions2.keys().iterator();
     while(keys.hasNext()) {
-      System.out.print(distance);
-      System.out.print(" ");
       int alpha = floor((frameTime - (currentTime - traceLength)) * 255 / traceLength);
       stroke(255,0,0, alpha);
       String objectKey = keys.next();
@@ -175,10 +170,6 @@ void displayTrace() {
       int y2 = floor(origin[1] + planetCoordsJSON2.getFloat(1)*scaleRatio);
       int x1 = floor(origin[0] + planetCoordsJSON1.getFloat(0)*scaleRatio);
       int y1 = floor(origin[1] + planetCoordsJSON1.getFloat(1)*scaleRatio);
-      
-      System.out.print(x1);
-      System.out.print(",");
-      System.out.println(y1);
       
       line(x2, y2, x1, y1);
     }
@@ -313,8 +304,10 @@ void mouseWheel(MouseEvent event) {
  * NAVIGATION
  */
 void mouseDragged() {
-  origin[0] += mouseX - pmouseX;
-  origin[1] += mouseY - pmouseY;
+  if (!cp5.isMouseOver()) {
+    origin[0] += mouseX - pmouseX;
+    origin[1] += mouseY - pmouseY;
+  }
 }
 
 void keyPressed() {
