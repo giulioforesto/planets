@@ -21,6 +21,7 @@ JSONObject currentDataFrame;
 JSONObject newDataFrame;
 
 boolean enableGrid = true;
+boolean enableTrace = true;
 
 File inputFile;
 BufferedReader reader;
@@ -228,9 +229,13 @@ void setup() {
     .setColorForeground(color(120))
     .setColorActive(color(255))
     .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(60)
     .setSize(10, 10)
     .addItem("Enable grid", 0) // Internal value is not used
+    .addItem("Enable trace", 0) // Internal value is not used
     .toggle(0)
+    .toggle(1)
     ;
   timeSpeedSlider = cp5.addSlider("timeSpeedSlider")
     .setGroup("menu")
@@ -281,7 +286,9 @@ void draw() {
   }
   if (currentDataFrame != null) {
     display(currentDataFrame);
-    displayTrace();
+    if (enableTrace) {
+      displayTrace();
+    }
   }
   
   disclaimer.display(
@@ -348,6 +355,7 @@ void keyPressed() {
 void controlEvent(ControlEvent event) { // Checkbox event
   if (event.isFrom(enableGridCheckbox)){
     enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
+    enableTrace = (enableGridCheckbox.getArrayValue()[1] == 1.0);
   }
 }
 
