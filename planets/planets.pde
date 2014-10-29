@@ -87,6 +87,10 @@ void fileSelected(File file) {
   Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
   timeline.setRange(0, maxTime); // s
   maxTimeLabel.setText(maxTime.toString());
+  
+  synchronized (this) {
+    this.notify();
+  }
 }
 
 void getData() {
@@ -205,7 +209,7 @@ void setup() {
   size(DIMENSIONS[0], DIMENSIONS[1]);
   
   getData(); // TODO condition to "replay mode"
-  
+
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   
   cp5 = new ControlP5(this);
@@ -252,6 +256,12 @@ void setup() {
   maxTimeLabel = cp5.addTextlabel("maxTimeLabel")
     .setPosition(width-30, height-10); // Text is set in fileSelected method
     ;
+    
+  synchronized (this) { // Waits for the file to be selected.
+    try {
+      this.wait();
+    } catch (InterruptedException e) {}
+  }
 }
 
 void draw() {  
