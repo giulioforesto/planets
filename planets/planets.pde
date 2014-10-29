@@ -367,6 +367,10 @@ void changeSourceFileButton(int value) {
   getData();
 }
 
+/**
+ * Jumps at the selected time.
+ * Sets the currentDataFrame instead of the newDataFrame in order to avoid refreshing the timeline again.
+ */
 void timeline(float time) {
   if (timeline.isMousePressed()) {
     Data.resetCursor();

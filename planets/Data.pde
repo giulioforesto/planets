@@ -39,7 +39,7 @@ public static class Data {
    */
   
   public static JSONObject getNextDataFrame(int dir) {
-    cursor = min(max(cursor + dir, 0), data.size());
+    cursor = min(max(cursor + dir, 0), data.size()-1);
     return data.getJSONObject(cursor);
   }
   
