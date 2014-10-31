@@ -208,6 +208,7 @@ void setup() {
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
+  frame.setResizable(true);
   
   getData(); // TODO condition to "replay mode"
 
@@ -271,6 +272,7 @@ void setup() {
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
+  
   background(255,255,255);
   if (enableGrid) {
     drawGrid();
