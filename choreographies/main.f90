@@ -12,7 +12,9 @@ program main
 
 contains
 
+    include 'iofunctions.f90'
     include 'functions.f90'
+    include 'forcemodel.f90'
 
 end program main
 

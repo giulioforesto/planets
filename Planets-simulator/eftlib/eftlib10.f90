@@ -1,4 +1,4 @@
-module eftlib8
+module eftlib10
 
     integer                     , parameter :: real_kind_eft = 10        ! Precision du calcul
     real(kind = real_kind_eft)  , parameter :: one = 1
