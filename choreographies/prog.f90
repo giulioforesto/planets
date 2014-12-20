@@ -56,6 +56,6 @@ print*, '---'
 
 print*,act
 
-
-
 call print_init_state(nc,nb,mc,nf,abf,exportinitstatefilename)
+
+call print_cheat_traj(nc,nb,mc,nf,abf,3,300,exportcheattrajfilename)

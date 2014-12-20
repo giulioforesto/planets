@@ -13,6 +13,8 @@ character(len=*)        , parameter                     :: fourrierexportcoefffi
     './output/test_cycle_export.txt'
 character(len=*)        , parameter                     :: exportinitstatefilename = &
     './output/initstateconverged.txt'
+character(len=*)        , parameter                     :: exportcheattrajfilename = &
+    './output/cheattrajconverged.txt'
     
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944_16              ! Pi

@@ -122,7 +122,6 @@ subroutine writeinitstate(iounit,t,mi,xi,vi,nrj,postoid,nb)
 
 end subroutine
 
-
 subroutine writecurrentstate_nomasschange(iounit,t,xi,nrj,postoid,nb)
 
     integer                                                     , intent(in)    :: iounit   ! Unit of I/O flux
