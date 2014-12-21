@@ -5,8 +5,9 @@ integer                 , parameter                     :: numthreads = 1       
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
 character(len=*)        , parameter                     :: gaussmethfilename = &
-!~     './input/methods/gauss_int_meth  2prec16.txt'
-    './input/methods/1pt.txt'
+!~     './input/methods/gauss_int_meth140prec16.txt'
+    './input/methods/gauss_int_meth900prec16.txt'
+!~     './input/methods/1pt.txt'
 character(len=*)        , parameter                     :: fourrierimportcoefffilename = &
     './input/init_states/test_cycle.txt'
 character(len=*)        , parameter                     :: fourrierexportcoefffilename = &
@@ -17,7 +18,11 @@ character(len=*)        , parameter                     :: exportcheattrajfilena
     './output/cheattrajconverged.txt'
     
 real (kind = real_kind) , parameter                     :: pi = &
-    3.141592653589793238462643383279502884197169399375105820974944_16              ! Pi
+    3.141592653589793238462643383279502884197169399375105820974944_16           ! Pi
+real (kind = real_kind) , parameter                     :: gold = &
+    1.618033988749894848204586834365638117720309179805762862135448_16           ! Golden ratio
+real (kind = real_kind) , parameter                     :: invgold = &
+    0.618033988749894848204586834365638117720309179805762862135448_16           ! Inverse of golden ratio
 real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force potential law
 
@@ -35,14 +40,28 @@ integer                                                         :: maxnf        
 integer                                                         :: si                   ! Number of steps of integration method
 real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi                ! abscisse and weights of integration method
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
-real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradact
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
-integer                 , parameter                             :: nopt = 1             ! Maximum number of optimisation steps
+integer                 , parameter                             :: nminopt = 10          ! Minumum number of optimisation steps
+integer                 , parameter                             :: nmaxopt = 10          ! Maximum number of optimisation steps
 integer                                                         :: iopt = 1             ! Current number of optimisation steps
+real(kind =real_kind)   , parameter                             :: distini = 1e-3       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1e-8       ! Size of initial optimisation step
+logical                                                         :: computedg
+
+real(kind =real_kind)   , parameter                             :: ninfmax = 10         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 10         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 10         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act                  ! Value of action
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradact              ! Value of gradient of action
+real(kind=real_kind)                                            :: ninf,n1,n2           ! Norms of gradient of action
+
+real(kind=real_kind)                                            :: actg,actm,actm2,actd
+real(kind=real_kind)                                            :: distg,distm,distm2,distd
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abfs
+
 
 integer                                                 :: i,j,k,l
 real(kind=real_kind)                                    :: alpha

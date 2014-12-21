@@ -39,6 +39,8 @@ allocate(sincostable(2,si,nc,maxnb,0:maxnf))
 call evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
 
 allocate(gradact(nd,2,nc,0:maxnf))
+allocate(abfs(nd,2,nc,0:maxnf))
+
 
 print*,si
 print*,nc
@@ -60,20 +62,85 @@ print*,act
 print*, '---'
 print*,gradact
 
+call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
 
+iopt = 0
 
+do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n1max).and.(n2 > n2max)))
+    
+    print*,iopt
+    print*,'act = ',act
+    print*,ninf,n1,n2
+    print*,ninfmax,n1max,n2max
+    
+    iopt = iopt+1
+    
+    distg = 0
+    distm = distini
+    distd = (1+gold)*distini
+    
+    actg = act
+    abfs = abf  - distm*gradact
+    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm)
+    abfs = abf  - distd*gradact
+    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actd)
+    
+    
+    do while (actd < actm)
+    
+        distg = distm
+        distm = distd
+        distd = gold*distd
+    
+        abfs = abf  - distd*gradact
+        
+        actg = actm
+        actm = actd
+        call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actd)
+!~         print*,actd
+        
+    end do
 
-
-
-
-
-
-
-
-
-
-
-
+    computedg = .true.
+    ! Golden search between  actg and actd
+    
+    do while ((distd-distg) < distmin)
+        if (computedg) then
+            distm2 = distd -invgold*(distd - distg)
+            abfs = abf  - distm2*gradact
+            call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm2)
+            if (actm < actm2) then
+                actd = actm2
+                distd = distm2
+                computedg = .false.
+            else
+                actg = actm
+                distg = distm
+                actm = actm2
+                distm = distm2
+            end if
+        else
+            distm2 = distg +invgold*(distd - distg)
+            abfs = abf  - distm2*gradact
+            call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm2)
+            if (actm < actm2) then
+                actg = actm2
+                distg = distm2
+                computedg = .true.
+            else
+                distd = distm
+                actd = actm
+                distm = distm2
+                actm = actm2
+            end if
+        end if
+    end do
+    
+    abf = abf  - distm*gradact
+    act = actm
+    call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
+    call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)    
+end do
 
 
 

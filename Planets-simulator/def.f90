@@ -35,7 +35,7 @@ real (kind = real_kind) , parameter                     :: repcoeff = 1         
 logical                 , parameter                     :: colenabled = .true.   ! Turns collision model on or off
 real (kind = real_kind) , parameter                     :: dx2min = 1d-3       ! Minimum square distance before collision
 
-real (kind = real_kind) , parameter                     :: tf = 250             ! End of simulation time
+real (kind = real_kind) , parameter                     :: tf = 100             ! End of simulation time
 real (kind = real_kind) , parameter                     :: dto = 1d-2 - 1d-6           ! Output time step
 integer                 , parameter                     :: outiounit = 3        ! Unit of output for json file
 

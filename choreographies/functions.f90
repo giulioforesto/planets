@@ -185,3 +185,35 @@ subroutine evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
     !$omp end parallel
 
 end subroutine
+
+subroutine evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
+
+    real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf), intent(in)    :: gradact
+    integer                                             , intent(in)    :: nc,maxnf
+    integer                 , dimension(nc)             , intent(in)    :: nf
+    real(kind=real_kind)                                , intent(out)   :: ninf,n1,n2
+    
+    integer                 :: i,j,k,d
+    real(kind=real_kind)    :: curabs
+    
+    ninf = 0
+    n1 = 0
+    n2 = 0
+    
+    do i=1,nc
+        do k=1,nf(i)
+            do d=1,nd
+                do j=1,2
+                    curabs = abs(gradact(d,j,i,k))
+                    if (ninf < curabs) then
+                        ninf = curabs
+                    end if
+                    n1 = n1 + curabs
+                    n2 = n2 + curabs*curabs
+                end do
+            end do
+        end do
+    end do
+    n2 = sqrt(n2)
+    
+end subroutine
