@@ -16,6 +16,9 @@ character(len=*)        , parameter                     :: exportinitstatefilena
     './output/initstateconverged.txt'
 character(len=*)        , parameter                     :: exportcheattrajfilename = &
     './output/cheattrajconverged.txt'
+!~ logical                 , parameter                     :: restartfromlast = .false.
+logical                 , parameter                     :: restartfromlast = .true.
+
     
 real (kind = real_kind) , parameter                     :: pi = &
     3.141592653589793238462643383279502884197169399375105820974944_16           ! Pi
@@ -26,7 +29,7 @@ real (kind = real_kind) , parameter                     :: invgold = &
 real (kind = real_kind) , parameter                     :: Guniv = 1            ! Universal gravitational constant
 real (kind = real_kind) , parameter                     :: fpow = -1            ! Power in force potential law
 
-integer                 , parameter                     :: maxnfinit = 1                    ! Maximum number of fourier coefficients to be randomly initialized.
+integer                 , parameter                     :: maxnfinit = 1000                 ! Maximum number of fourier coefficients to be randomly initialized.
 logical                 , parameter                     :: disturbfouriercoeffs = .false.   ! Randomizes arround initial Fourier coefficients
 real(kind=real_kind)    , parameter                     :: disturbcoeff = 0.1_8
 
@@ -42,16 +45,16 @@ real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi        
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
-integer                 , parameter                             :: nminopt = 10          ! Minumum number of optimisation steps
-integer                 , parameter                             :: nmaxopt = 10          ! Maximum number of optimisation steps
+integer                 , parameter                             :: nminopt = 1000         ! Minumum number of optimisation steps
+integer                 , parameter                             :: nmaxopt = 10000          ! Maximum number of optimisation steps
 integer                                                         :: iopt = 1             ! Current number of optimisation steps
-real(kind =real_kind)   , parameter                             :: distini = 1e-3       ! Size of initial optimisation step
-real(kind =real_kind)   , parameter                             :: distmin = 1e-8       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distini = 1e-8       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1e-14       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 10         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 10         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 10         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1e-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1e-2         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1e-3         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act                  ! Value of action

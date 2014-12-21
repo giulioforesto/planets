@@ -1,7 +1,7 @@
 FC=gfortran
 
-#~ FFLAGS=-fimplicit-none -Ofast
-FFLAGS=-fbounds-check -fbacktrace -fimplicit-none
+FFLAGS=-fimplicit-none -Ofast
+#~ FFLAGS=-fbounds-check -fbacktrace -fimplicit-none
 
 all:
 

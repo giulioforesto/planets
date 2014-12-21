@@ -11,9 +11,11 @@ call init_random_seed()
 call readgaussmeth(xi,wi,si,gaussmethfilename)
 
 ! Reads initial Fourrier coefficients
-
-call readfouriercoeffs(nc,mc,nb,maxnb,nf,maxnf,abf,fourrierimportcoefffilename)
-
+if (restartfromlast) then
+    call readfouriercoeffs(nc,mc,nb,maxnb,nf,maxnf,abf,fourrierexportcoefffilename)
+else
+    call readfouriercoeffs(nc,mc,nb,maxnb,nf,maxnf,abf,fourrierimportcoefffilename)
+end if
 ! If data was not available, we start from a random initial state
 
 if (.not. (allocated(abf))) then
@@ -42,25 +44,25 @@ allocate(gradact(nd,2,nc,0:maxnf))
 allocate(abfs(nd,2,nc,0:maxnf))
 
 
-print*,si
-print*,nc
-print*,nb
-print*,mc
+!~ print*,si
+!~ print*,nc
+!~ print*,nb
+!~ print*,mc
 
 act = 0
 
-abf = 0
-abf(1,1,1,1) = 1
-abf(2,2,1,1) = 1
+!~ abf = 0
+!~ abf(1,1,1,1) = 1
+!~ abf(2,2,1,1) = 1
 
 call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
 call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
-print*, abf
-
-print*, '---'
-print*,act
-print*, '---'
-print*,gradact
+!~ print*, abf
+!~ 
+!~ print*, '---'
+!~ print*,act
+!~ print*, '---'
+!~ print*,gradact
 
 call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
 
@@ -87,7 +89,7 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
     
     
     do while (actd < actm)
-    
+!~         print*, iopt
         distg = distm
         distm = distd
         distd = gold*distd
@@ -97,7 +99,6 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
         actg = actm
         actm = actd
         call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actd)
-!~         print*,actd
         
     end do
 
@@ -145,6 +146,6 @@ end do
 
 
 call print_init_state(nc,nb,mc,nf,abf,exportinitstatefilename)
-call print_cheat_traj(nc,nb,mc,nf,abf,3,300,exportcheattrajfilename)
-
+call print_cheat_traj(nc,nb,mc,nf,abf,3,3000,exportcheattrajfilename)
+call writefouriercoeffs(nc,mc,nb,nf,maxnf,abf,fourrierexportcoefffilename)
 

@@ -122,7 +122,7 @@ subroutine writefouriercoeffs(nc,mc,nb,nf,maxnf,abf,filename)   ! Writes masses 
     write(iounit,*) nf
     write(iounit,*) '.true.'
     do i=1,nc
-        write(iounit,*) abf(:,:,i,1:nf(i))
+        write(iounit,*) abf(:,:,i,0:nf(i))
     end do
     
     close(iounit)
