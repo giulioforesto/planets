@@ -112,3 +112,76 @@ subroutine evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
     !$omp end parallel
 
 end subroutine
+
+
+subroutine evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
+    integer                                                     , intent(in)    :: nc,si,nd
+    integer                 , dimension(nc)                     , intent(in)    :: nb,nf
+    integer                                                     , intent(in)    :: maxnf,maxnb
+    real(kind=real_kind)    , dimension(nc)                     , intent(in)    :: mc
+    real(kind=real_kind)    , dimension(si)                     , intent(in)    :: wi
+    real(kind=real_kind)    , dimension(2,si,nc,maxnb,0:maxnf)  , intent(in)    :: sincostable
+    real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf)        , intent(in)    :: abf
+    real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf)        , intent(out)   :: res
+
+    real(kind=real_kind)        :: gradlag(nd,2,nc,0:maxnf) 
+    real(kind=real_kind)        :: v(nd), v2, x(nd,nc,maxnb), xijpq(nd), xijpq2 ,fijpq(nd)
+    integer                     :: l,i,j,k,p,q,d
+    res = 0
+
+    !$omp parallel default(private) shared(sincostable,si,nc,nb,nf,abf,mc)	reduction( + : res )
+    !$omp do 
+    do l=1,si
+        gradlag = 0
+        x = 0
+        do i=1,nc
+            do j=1,nb(i)
+                v = 0
+                do k=1,nf(i)
+                    v = v + k*(abf(:,2,i,k)*sincostable(1,l,i,j,k) - abf(:,1,i,k)*sincostable(2,l,i,j,k) )
+                    x(:,i,j) = x(:,i,j) + (abf(:,2,i,k)*sincostable(2,l,i,j,k) + abf(:,1,i,k)*sincostable(1,l,i,j,k) )
+                end do
+                v = mc(i)*v
+                do k=1,nf(i)
+                    gradlag(:,1,i,k) = gradlag(:,1,i,k) -k*sincostable(2,l,i,j,k)*v
+                    gradlag(:,2,i,k) = gradlag(:,2,i,k) +k*sincostable(1,l,i,j,k)*v
+                end do
+            end do
+        end do
+
+        do i=1,nc
+            do j=1,nb(i)-1
+                do p=i,nc
+                    do q=j+1,nb(p)
+                        xijpq = x(:,i,j) - x(:,p,q)
+                        xijpq2 = xijpq(1)*xijpq(1)
+                        do d=2,nd
+                            xijpq2 = xijpq2 + xijpq(d)*xijpq(d)
+                        end do
+                        fijpq =  Guniv*xijpq * forceoverdist(xijpq2)
+                        if (p .eq. i) then
+                            do k=0,nf(i)
+                                gradlag(:,1,i,k) = gradlag(:,1,i,k) &
+                                + (sincostable(1,l,i,q,k) - sincostable(1,l,i,j,k)) * fijpq
+                                gradlag(:,2,i,k) = gradlag(:,2,i,k) &
+                                + (sincostable(2,l,i,q,k) - sincostable(2,l,i,j,k)) * fijpq                            
+                            end do                        
+                        else                        
+                            do k=0,nf(i)
+                                gradlag(:,1,i,k) = gradlag(:,1,i,k) &
+                                - sincostable(1,l,i,j,k) * fijpq
+                                gradlag(:,2,i,k) = gradlag(:,2,i,k) &
+                                - sincostable(2,l,i,j,k) * fijpq                                 
+                            end do
+                        end if
+                    end do
+                end do
+            end do
+        end do
+        
+        res = res + wi(l)*gradlag
+    end do
+    !$omp end do
+    !$omp end parallel
+
+end subroutine

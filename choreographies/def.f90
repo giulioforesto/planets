@@ -25,8 +25,6 @@ integer                 , parameter                     :: maxnfinit = 1        
 logical                 , parameter                     :: disturbfouriercoeffs = .false.   ! Randomizes arround initial Fourier coefficients
 real(kind=real_kind)    , parameter                     :: disturbcoeff = 0.1_8
 
-
-
 integer                                                         :: nc                   ! Number of cycle
 real(kind=real_kind)    , dimension(:)  ,allocatable            :: mc                   ! Mass of all bodies on a given cycle
 integer                 , dimension(:)  ,allocatable            :: nb                   ! Number of bodies on cycle
@@ -37,9 +35,14 @@ integer                                                         :: maxnf        
 integer                                                         :: si                   ! Number of steps of integration method
 real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi                ! abscisse and weights of integration method
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradact
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
+integer                 , parameter                             :: nopt = 1             ! Maximum number of optimisation steps
+integer                                                         :: iopt = 1             ! Current number of optimisation steps
+
 real(kind=real_kind)                                            :: nran                 ! Random number
-real(kind=real_kind)                                            :: act                 ! Value of action
+real(kind=real_kind)                                            :: act                  ! Value of action
 
 integer                                                 :: i,j,k,l
+real(kind=real_kind)                                    :: alpha

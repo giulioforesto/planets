@@ -38,6 +38,8 @@ end if
 allocate(sincostable(2,si,nc,maxnb,0:maxnf))
 call evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
 
+allocate(gradact(nd,2,nc,0:maxnf))
+
 print*,si
 print*,nc
 print*,nb
@@ -50,12 +52,32 @@ abf(1,1,1,1) = 1
 abf(2,2,1,1) = 1
 
 call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
+call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
 print*, abf
 
 print*, '---'
-
 print*,act
+print*, '---'
+print*,gradact
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 call print_init_state(nc,nb,mc,nf,abf,exportinitstatefilename)
-
 call print_cheat_traj(nc,nb,mc,nf,abf,3,300,exportcheattrajfilename)
+
+
