@@ -16,8 +16,8 @@ character(len=*)        , parameter                     :: exportinitstatefilena
     './output/initstateconverged.txt'
 character(len=*)        , parameter                     :: exportcheattrajfilename = &
     './output/cheattrajconverged.txt'
-logical                 , parameter                     :: restartfromlast = .false.
-!~ logical                 , parameter                     :: restartfromlast = .true.
+!~ logical                 , parameter                     :: restartfromlast = .false.
+logical                 , parameter                     :: restartfromlast = .true.
 
     
 real (kind = real_kind) , parameter                     :: pi = &
@@ -47,14 +47,15 @@ real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
 integer                 , parameter                             :: nminopt = 1000         ! Minumum number of optimisation steps
 integer                 , parameter                             :: nmaxopt = 10000          ! Maximum number of optimisation steps
-integer                                                         :: iopt = 1             ! Current number of optimisation steps
-real(kind =real_kind)   , parameter                             :: distini = 1e-8       ! Size of initial optimisation step
-real(kind =real_kind)   , parameter                             :: distmin = 1e-14       ! Size of final optimisation step
+integer                                                         :: iopt              ! Current number of optimisation steps
+integer                                                         :: nlin              ! Current number of line search
+real(kind =real_kind)   , parameter                             :: distiniini = 1d-8       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1d-10       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 1e-3         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 1e-2         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 1e-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1d-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1d-2         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1d-3         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act                  ! Value of action
@@ -67,4 +68,4 @@ real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abfs
 
 
 integer                                                 :: i,j,k,l
-real(kind=real_kind)                                    :: alpha
+real(kind=real_kind)                                    :: alpha, distini

@@ -91,7 +91,7 @@ subroutine evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
             do j=1,nb(i)
                 do p=i,nc
                     if (p .eq. i) then
-                        do q=j+1,nb(p)-1
+                        do q=j+1,nb(p)
                             xijpq = x(:,i,j) - x(:,p,q)
                             xijpq2 = xijpq(1)*xijpq(1)
                             do d=2,nd
@@ -163,7 +163,7 @@ subroutine evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
             do j=1,nb(i)
                 do p=i,nc
                     if (p .eq. i) then
-                        do q=j+1,nb(p)-1
+                        do q=j+1,nb(p)
                             xijpq = x(:,i,j) - x(:,p,q)
                             xijpq2 = xijpq(1)*xijpq(1)
                             do d=2,nd

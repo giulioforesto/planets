@@ -28,7 +28,7 @@ if (.not. (allocated(abf))) then
                 do l=0,min(nf(k),maxnfinit)
                     
                     call random_number(nran)
-                    abf(i,j,k,l) = nran
+                    abf(i,j,k,l) = nran * 0.1/k
                     
                 end do
             end do
@@ -67,7 +67,7 @@ call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
 call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
 
 iopt = 0
-
+distini = distiniini
 do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n1max).and.(n2 > n2max)))
     
     print*,iopt
@@ -77,19 +77,32 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
     
     iopt = iopt+1
     
-    distg = 0
-    distm = distini
-    distd = (1+gold)*distini
+!~     distg = 0
+!~     distm = distini
+!~     distd = (1+gold)*distini
+!~ 
+!~     
+!~     actg = act
+!~     abfs = abf  - distm*gradact
+!~     call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm)
+!~     abfs = abf  - distd*gradact
+!~     call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actd)
+!~ 
+!~ 
+    distg = -distini
+    distm = 0
+    distd = (gold)*distini
     
-    actg = act
-    abfs = abf  - distm*gradact
-    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm)
+    actm = act
+    abfs = abf  - distg*gradact
+    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actg)
     abfs = abf  - distd*gradact
     call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actd)
-    
+!~     
     
     do while (actd < actm)
-!~         print*, iopt
+!~         print*, actg, actm,actd
+    
         distg = distm
         distm = distd
         distd = gold*distd
@@ -102,37 +115,51 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
         
     end do
 
+!~     print*, actg, actm,actd
+
     computedg = .true.
     ! Golden search between  actg and actd
     
-    do while ((distd-distg) < distmin)
+!~     print*,distd-distg , distmin,((distd-distg) < distmin)
+    
+    nlin = 0
+    
+    do while ((distd-distg) > distmin)
+        nlin = nlin +1
+!~         print*,(distd-distg)
         if (computedg) then
             distm2 = distd -invgold*(distd - distg)
             abfs = abf  - distm2*gradact
             call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm2)
+!~             print*, actm, actm2
             if (actm < actm2) then
                 actd = actm2
                 distd = distm2
                 computedg = .false.
+!~                 print*,1
             else
                 actg = actm
                 distg = distm
                 actm = actm2
                 distm = distm2
+!~                                 print*,2
             end if
         else
             distm2 = distg +invgold*(distd - distg)
             abfs = abf  - distm2*gradact
             call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm2)
+!~                         print*, actm, actm2
             if (actm < actm2) then
                 actg = actm2
                 distg = distm2
                 computedg = .true.
+!~                                 print*,3
             else
                 distd = distm
                 actd = actm
                 distm = distm2
                 actm = actm2
+!~                                     print*,4
             end if
         end if
     end do
@@ -141,6 +168,10 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
     act = actm
     call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
     call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)    
+    
+    
+    print*,'dist = ',distm, distini
+    print*,nlin
 end do
 
 
