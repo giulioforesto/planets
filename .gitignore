@@ -3,6 +3,7 @@ Planets-simulator/input/*
 Planets-simulator/output/*
 choreographies/input/*
 choreographies/output/*
+<<<<<<< HEAD
 calculator/*
 
 
@@ -10,3 +11,13 @@ calculator/*
 
 *test_long.txt
 planets/application*
+=======
+calculator/*
+
+
+
+
+*test_long.txt
+planets/application*
+outfiles/
+>>>>>>> 309ea4fc77c0032a857a2d3eaf6e8c385615ed7a
