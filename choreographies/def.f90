@@ -5,7 +5,7 @@ integer                 , parameter                     :: numthreads = 1       
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
 character(len=*)        , parameter                     :: gaussmethfilename = &
-!~     './input/methods/gauss_int_meth140prec16.txt'
+!~     './input/methods/gauss_int_meth100prec16.txt'
     './input/methods/gauss_int_meth900prec16.txt'
 !~     './input/methods/1pt.txt'
 character(len=*)        , parameter                     :: fourrierimportcoefffilename = &
@@ -49,17 +49,18 @@ integer                 , parameter                             :: nminopt = 100
 integer                 , parameter                             :: nmaxopt = 10000          ! Maximum number of optimisation steps
 integer                                                         :: iopt              ! Current number of optimisation steps
 integer                                                         :: nlin              ! Current number of line search
-real(kind =real_kind)   , parameter                             :: distiniini = 1d-8       ! Size of initial optimisation step
-real(kind =real_kind)   , parameter                             :: distmin = 1d-10       ! Size of final optimisation step
+real(kind =real_kind)   , parameter                             :: distiniini = 1d-6       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1d-8       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 1d-3         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 1d-2         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 1d-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1d-1         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1d-1         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1d-1         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act                  ! Value of action
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradact              ! Value of gradient of action
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradactdf              ! Value of gradient of action
 real(kind=real_kind)                                            :: ninf,n1,n2           ! Norms of gradient of action
 
 real(kind=real_kind)                                            :: actg,actm,actm2,actd

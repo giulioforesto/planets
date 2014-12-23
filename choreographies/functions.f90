@@ -239,3 +239,41 @@ subroutine evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
     n2 = sqrt(n2)
     
 end subroutine
+
+subroutine evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res,delta)
+    integer                                                     , intent(in)    :: nc,si,nd
+    integer                 , dimension(nc)                     , intent(in)    :: nb,nf
+    integer                                                     , intent(in)    :: maxnf,maxnb
+    real(kind=real_kind)    , dimension(nc)                     , intent(in)    :: mc
+    real(kind=real_kind)    , dimension(si)                     , intent(in)    :: wi
+    real(kind=real_kind)    , dimension(2,si,nc,maxnb,0:maxnf)  , intent(in)    :: sincostable
+    real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf)        , intent(in)    :: abf
+    real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf)        , intent(out)   :: res
+    real(kind=real_kind)                                        , intent(in)    :: delta
+
+    real(kind=real_kind)        :: abfp(nd,2,nc,0:maxnf) 
+    real(kind=real_kind)        :: actg, actd
+    integer                     :: l,i,j,k,p,q,d
+    
+    res = 0
+    abfp = abf
+    
+    do d=1,nd
+        do i=1,2
+            do j=1,nc
+                do k=0,maxnf
+
+                    abfp(d,i,j,k) = abf(d,i,j,k) + delta
+                    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfp,actd)
+                    abfp(d,i,j,k) = abf(d,i,j,k) - delta
+                    call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfp,actg)
+                    abfp(d,i,j,k) = abf(d,i,j,k)
+                    res(d,i,j,k) = (actd-actg) / (2*delta)
+                    
+                end do
+            end do
+        end do
+    end do
+    
+
+end subroutine
