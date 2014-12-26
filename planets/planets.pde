@@ -189,7 +189,7 @@ void displayTrace() {
 void drawGrid() {
   for (int i = 0; i < 3; i++) {
     float delta = pow(2,i);
-    int alpha = floor(8 * pow(2,i) * scaleRatio/DEFAULT_SCALE_RATIO); // 8 factor is empirical
+    int alpha = floor(128 * pow(2,i)/4 * scaleRatio/(4*DEFAULT_SCALE_RATIO)); // 128 constant and 4 factor to DEFAULT_SCALE_RATIO are empirical
     stroke(0, alpha);
     float x = 0;
     float y = 0;

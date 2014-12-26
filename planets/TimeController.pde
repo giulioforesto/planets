@@ -1,9 +1,9 @@
 public class TimeController {
   private float timeRatio = DEFAULT_TIME_RATIO;
-  private long timeOrigin = millis(); // ms
+  private long timeOrigin = millis(); // ms. for rewind and fast forward
   
   public boolean paused = true;
-  private float pauseTime = 0; // simulation time
+  private float pauseTime = 0;
   
   public float getTime() {
     return (millis() - timeOrigin) / timeRatio;
@@ -21,7 +21,7 @@ public class TimeController {
     pauseTime = time;
   }
   
-  public float setTimeRatio(float newTimeRatio) {
+  public void setTimeRatio(float newTimeRatio) {
     float ratio = DEFAULT_TIME_RATIO/newTimeRatio;
     if (ratio > 0.95 && ratio < 1.05) {
       newTimeRatio = DEFAULT_TIME_RATIO;
@@ -29,18 +29,22 @@ public class TimeController {
     float var = newTimeRatio/timeRatio;
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
     timeRatio = newTimeRatio;
-    
-    return newTimeRatio;
   }
   
   public float increaseTimeRatio(float var) {
-    return setTimeRatio(timeRatio*var);
+    float newTimeRatio = timeRatio*var;
+    if (DEFAULT_TIME_RATIO/newTimeRatio > 0.95 && DEFAULT_TIME_RATIO/newTimeRatio < 1.05) {
+      newTimeRatio = DEFAULT_TIME_RATIO;
+    }
+    setTimeRatio(newTimeRatio);
+    
+    return newTimeRatio;
   }
   
   public void pause() {
     if (!paused) {
       paused = true;
-      pauseTime = (millis() - timeOrigin) / timeRatio; // should be the same as currentDataFrame.getFloat("t");
+      pauseTime = (millis() - timeOrigin) / timeRatio; // Simulation time: should be the same as currentDataFrame.getFloat("t");
     } else {
       timeOrigin = floor(millis() - pauseTime*timeRatio);
       paused = false;
