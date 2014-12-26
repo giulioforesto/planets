@@ -4,7 +4,7 @@ integer                 , parameter                     :: real_kind = 16   ! Pr
 integer                 , parameter                     :: numthreads = 8   ! Number of CPU threads to be used by OpenMP
 integer                 , parameter                     :: eftk = 0         ! Performs EFT eftk times
 real (kind = real_kind) , parameter                     :: one = 1          ! Unit value in working precision
-integer                 , parameter                     :: num_steps = 999  ! nombre d'étapes de la méthode
+integer                 , parameter                     :: num_steps = 9999  ! nombre d'étapes de la méthode
 logical                 , parameter                     :: compute_butcher = .false. ! Compute the associated Butcher tableau
 
 ! Tableaux statiques
@@ -19,4 +19,5 @@ real (kind = real_kind) , dimension(num_steps)          :: b_butch,c_butch  ! Bu
     !Itérateurs
 
 integer                                                 :: i,j,k,p,q                 
-real (kind=real_kind)                                   :: a,b,c
+real (kind=real_kind)                                   :: a,b,c,time1,time2
+

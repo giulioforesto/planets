@@ -6,7 +6,13 @@
 
 Proots = 0
 
+time1 = 0
+
 do i=2,num_steps
+
+    call cpu_time(time2)
+    print*, (time2 - time1)
+    time1 = time2
     
     print*, "Computing roots of degree",i
     

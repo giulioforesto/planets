@@ -16,8 +16,8 @@ character(len=*)        , parameter                     :: exportinitstatefilena
     './output/initstateconverged.txt'
 character(len=*)        , parameter                     :: exportcheattrajfilename = &
     './output/cheattrajconverged.txt'
-!~ logical                 , parameter                     :: restartfromlast = .false.
-logical                 , parameter                     :: restartfromlast = .true.
+logical                 , parameter                     :: restartfromlast = .false.
+!~ logical                 , parameter                     :: restartfromlast = .true.
 
     
 real (kind = real_kind) , parameter                     :: pi = &
@@ -45,8 +45,8 @@ real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi        
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
-integer                 , parameter                             :: nminopt = 1000         ! Minumum number of optimisation steps
-integer                 , parameter                             :: nmaxopt = 10000          ! Maximum number of optimisation steps
+integer                 , parameter                             :: nminopt = 100         ! Minumum number of optimisation steps
+integer                 , parameter                             :: nmaxopt = 500          ! Maximum number of optimisation steps
 integer                                                         :: iopt              ! Current number of optimisation steps
 integer                                                         :: nlin              ! Current number of line search
 real(kind =real_kind)   , parameter                             :: distiniini = 1d-6       ! Size of initial optimisation step

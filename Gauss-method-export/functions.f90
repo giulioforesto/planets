@@ -128,7 +128,7 @@ subroutine writegaussmeth(x,w,s,prec)
     
     integer , parameter                 :: iounit = 2       ! Number required by Fortran for Input/Output
     
-    write(filename, '(A23,I3,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
+    write(filename, '(A23,I4,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
 
