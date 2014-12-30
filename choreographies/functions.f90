@@ -49,7 +49,81 @@ subroutine evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
     !$omp end parallel
  end subroutine
  
- subroutine evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
+!~ subroutine evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
+!~     integer                                                     , intent(in)    :: nc,si,nd
+!~     integer                 , dimension(nc)                     , intent(in)    :: nb,nf
+!~     integer                                                     , intent(in)    :: maxnf,maxnb
+!~     real(kind=real_kind)    , dimension(nc)                     , intent(in)    :: mc
+!~     real(kind=real_kind)    , dimension(si)                     , intent(in)    :: wi
+!~     real(kind=real_kind)    , dimension(2,si,nc,maxnb,0:maxnf)  , intent(in)    :: sincostable
+!~     real(kind=real_kind)    , dimension(nd,2,nc,0:maxnf)        , intent(in)    :: abf
+!~     real(kind=real_kind)                                        , intent(out)   :: res
+!~ 
+!~     real(kind=real_kind)        :: lag, kin, pot
+!~     real(kind=real_kind)        :: v(nd), v2, x(nd,nc,maxnb), xijpq(nd), xijpq2
+!~     integer                     :: l,i,j,k,p,q,d
+!~     res = 0
+!~ 
+!~     !$omp parallel default(private) shared(sincostable,si,nc,nb,nf,abf,mc)	reduction( + : res )
+!~     !$omp do 
+!~     do l=1,si
+!~         kin = 0
+!~         pot = 0
+!~         x = 0
+!~         do i=1,nc
+!~             do j=1,nb(i)
+!~                 v = 0
+!~                 do k=0,nf(i)
+!~                     v = v + k*(abf(:,2,i,k)*sincostable(1,l,i,j,k) - abf(:,1,i,k)*sincostable(2,l,i,j,k) )
+!~                     x(:,i,j) = x(:,i,j) + (abf(:,2,i,k)*sincostable(2,l,i,j,k) + abf(:,1,i,k)*sincostable(1,l,i,j,k) )
+!~                 end do
+!~                 v2 = v(1)*v(1)
+!~                 do d=2,nd
+!~                     v2 = v2 + v(d)*v(d)
+!~                 end do
+!~                 kin = kin + mc(i) * v2
+!~             end do
+!~         end do
+!~ 
+!~         kin = kin / 2
+!~ 
+!~         do i=1,nc
+!~             do j=1,nb(i)
+!~                 do p=i,nc
+!~                     if (p .eq. i) then
+!~                         do q=j+1,nb(p)
+!~                             xijpq = x(:,i,j) - x(:,p,q)
+!~                             xijpq2 = xijpq(1)*xijpq(1)
+!~                             do d=2,nd
+!~                                 xijpq2 = xijpq2 + xijpq(d)*xijpq(d)
+!~                             end do
+!~                             
+!~                             pot = pot + mc(i)*mc(p)*potential(xijpq2)
+!~                         end do
+!~                     else
+!~                         do q=1,nb(p)
+!~                             xijpq = x(:,i,j) - x(:,p,q)
+!~                             xijpq2 = xijpq(1)*xijpq(1)
+!~                             do d=2,nd
+!~                                 xijpq2 = xijpq2 + xijpq(d)*xijpq(d)
+!~                             end do
+!~                             
+!~                             pot = pot + mc(i)*mc(p)*potential(xijpq2)
+!~                         end do
+!~                     end if
+!~                 end do
+!~             end do
+!~         end do
+!~         
+!~         lag = kin - Guniv*pot
+!~         res = res + wi(l)*lag
+!~     end do
+!~     !$omp end do
+!~     !$omp end parallel
+!~ 
+!~ end subroutine
+
+subroutine evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
     integer                                                     , intent(in)    :: nc,si,nd
     integer                 , dimension(nc)                     , intent(in)    :: nb,nf
     integer                                                     , intent(in)    :: maxnf,maxnb

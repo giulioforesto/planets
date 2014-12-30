@@ -5,8 +5,8 @@ integer                 , parameter                     :: numthreads = 1       
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
 character(len=*)        , parameter                     :: gaussmethfilename = &
-!~     './input/methods/gauss_int_meth100prec16.txt'
-    './input/methods/gauss_int_meth900prec16.txt'
+    './input/methods/gauss_int_meth300prec16.txt'
+!~     './input/methods/gauss_int_meth900prec16.txt'
 !~     './input/methods/1pt.txt'
 character(len=*)        , parameter                     :: fourrierimportcoefffilename = &
     './input/init_states/test_cycle.txt'
@@ -45,17 +45,18 @@ real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi        
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
-integer                 , parameter                             :: nminopt = 100         ! Minumum number of optimisation steps
-integer                 , parameter                             :: nmaxopt = 500          ! Maximum number of optimisation steps
+integer                 , parameter                             :: nminopt = 200         ! Minumum number of optimisation steps
+integer                 , parameter                             :: nmaxopt = 5000          ! Maximum number of optimisation steps
 integer                                                         :: iopt              ! Current number of optimisation steps
 integer                                                         :: nlin              ! Current number of line search
-real(kind =real_kind)   , parameter                             :: distiniini = 1d-6       ! Size of initial optimisation step
-real(kind =real_kind)   , parameter                             :: distmin = 1d-8       ! Size of final optimisation step
+real(kind =real_kind)   , parameter                             :: distiniini = 1d-3       ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1d-10       ! Size of final optimisation step
+real(kind =real_kind)   , parameter                             :: convratio = 1d3       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 1d-1         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 1d-1         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 1d-1         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1d-2         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1d-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1d-3         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act                  ! Value of action

@@ -1,6 +1,6 @@
 ! Detects and deals with collisions
 
-call compute_energy(mi,xi,vi,nb,nrj)
+!~ call compute_energy(mi,xi,vi,nb,nrj)
 
 ! Computes all distances
 

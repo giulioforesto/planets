@@ -12,17 +12,17 @@ integer                 , parameter                     :: maxit = 10           
 logical                 , parameter                     :: useeft = .true. ! Uses error-free transformations for compensated summations
 
 integer                 , parameter                     :: nd = 2               ! Number of simulated space dimensions
-real (kind = real_kind) , parameter                     :: dtinit = 0.00001_16        ! Inital time step
+real (kind = real_kind) , parameter                     :: dtinit = 0.0001_16        ! Inital time step
 
 logical                 , parameter                     :: centerinit = .true.  ! Centers barycenter to origin
-logical                 , parameter                     :: loadinitstate = .false. ! Loads initial state from file or creates a random one
+logical                 , parameter                     :: loadinitstate = .true. ! Loads initial state from file or creates a random one
 integer                 , parameter                     :: nbinit = 50          ! Initial number of bodies to create.
 real (kind = real_kind) , parameter                     :: xmaxinit = 5         ! Initial size of box containing all randomly created bodies
 real (kind = real_kind) , parameter                     :: vmeaninit = 0        ! Initial mean velocity
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
 character(len=*)        , parameter                     :: initstatefilename = &
-!~     './input/init_states/init_test_crash.txt'
-    './input/init_states/1.2.simple.txt'
+    './input/init_states/initstateconverged.txt'
+!~     './input/init_states/1.2.simple.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
 real (kind = real_kind) , parameter                     :: Guniv = 1                 ! Universal gravitational constant

@@ -117,7 +117,7 @@ do while (t < tf)
         call writecurrentstate_nomasschange(outiounit,t,xi,nrj,postoid,nb)
         t_o = t
         
-        print*,'t=',t,'H=',nrj,'nb=',nb
+        print*,'t=',t,'dH/Ho=',(abs(nrjinit - nrj)/nrjinit),'nb=',nb
         
     end if
     
@@ -126,9 +126,8 @@ do while (t < tf)
     if (colenabled) then
         include "collisions.f90"
     end if
+    
 end do
 
 write(outiounit,'(A)')    "]"
 close(outiounit)
-
-print*,'total relative energy loss over simulation : ', abs(nrjinit - nrj)/nrjinit
