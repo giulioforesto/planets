@@ -15,13 +15,12 @@ else
 end if
 ! If data was not available, we start from a random initial state
 
-
 ! Reads integration method from file
 
 !~ call readgaussmeth(xi,wi,si,gaussmethfilename)
 
 
-si = maxnf
+si = 7*maxnf
 allocate(wi(si))
 allocate(xi(si))
 
@@ -41,6 +40,8 @@ if (.not. (allocated(abf))) then
     
     allocate(   abf(nd,2,nc,0:maxnf)  )
     
+    abf = 0
+    
     do i=1,nd
         do j=1,2
             do k=1,nc
@@ -50,7 +51,8 @@ if (.not. (allocated(abf))) then
 !~                     abf(i,j,k,l) = nran * (1.0_8/(l+1))
 !~                     abf(i,j,k,l) = 2*nran-1
 !~                     abf(i,j,k,l) = (2*nran-1)* (1.0_8/(l+1))
-                    abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-1))
+!~                     abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-1.5))
+                    abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-1))/3
                     
                 end do
             end do
@@ -66,6 +68,7 @@ allocate(gradact(nd,2,nc,0:maxnf))
 allocate(abfs(nd,2,nc,0:maxnf))
 
 call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
+
 call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
 
     do k=1,maxnf
@@ -157,7 +160,7 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
 
     call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
     call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
-    gradact = gradact / n2    
+    gradact = gradact    
     
     do k=1,maxnf
 !~     
@@ -167,13 +170,13 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
 !~             gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**1.5)
 !~         end if
 !~         call random_number(nran)
-        gradact(:,:,:,k) = gradact(:,:,:,k) /(k**(0.5))
+        gradact(:,:,:,k) = gradact(:,:,:,k) /(k**(2))
     end do
     
     
     print*,'dist = ',distm, distini
     print*,nlin
-    distini = max(distm/2 , distmin)
+    distini = min(max(distm/2 , distmin),distmax)
     
     
 end do

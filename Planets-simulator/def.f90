@@ -3,7 +3,7 @@
 integer                 , parameter                     :: real_kind = 8        ! Precision du calcul
 integer                 , parameter                     :: numthreads = 1       ! Number of CPU threads to be used by OpenMP
 character(len=*)        , parameter                     :: butchtablefilename = &
-    './input/methods/implicit/gauss_butch_table 20prec16.txt'
+    './input/methods/implicit/gauss_butch_table  3prec16.txt'
 !~     './input/methods/explicit/kutta_3_8th_table.txt'
 logical                 , parameter                     :: explicitRK = .false. ! If true then the method is treated as expicit, if false, then the method is treated as implicit.
 real (kind = real_kind) , parameter                     :: errsummax = 1d-17    ! Maximum difference between two iterations of implicit method
@@ -22,7 +22,7 @@ real (kind = real_kind) , parameter                     :: vmeaninit = 0        
 real (kind = real_kind) , parameter                     :: mmaxinit = 1         ! Maximum initial mass
 character(len=*)        , parameter                     :: initstatefilename = &
     './input/init_states/initstateconverged.txt'
-!~     './input/init_states/1.2.simple.txt'
+!~     './input/init_states/1.2.simple.init.txt'
 character(len=*)        , parameter                     :: outputfilename = &
     './output/outfile.txt'
 real (kind = real_kind) , parameter                     :: Guniv = 1                 ! Universal gravitational constant

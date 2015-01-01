@@ -16,8 +16,8 @@ character(len=*)        , parameter                     :: exportinitstatefilena
     './output/initstateconverged.txt'
 character(len=*)        , parameter                     :: exportcheattrajfilename = &
     './output/cheattrajconverged.txt'
-logical                 , parameter                     :: restartfromlast = .false.
-!~ logical                 , parameter                     :: restartfromlast = .true.
+!~ logical                 , parameter                     :: restartfromlast = .false.
+logical                 , parameter                     :: restartfromlast = .true.
 
     
 real (kind = real_kind) , parameter                     :: pi = &
@@ -45,12 +45,13 @@ real(kind=real_kind)    , dimension(:)  ,allocatable            :: xi,wi        
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: abf
 real(kind=real_kind)    , dimension(:,:,:,:,:)  , allocatable   :: sincostable
 
-integer                 , parameter                             :: nminopt = 200         ! Minumum number of optimisation steps
-integer                 , parameter                             :: nmaxopt = 5000          ! Maximum number of optimisation steps
+integer                 , parameter                             :: nminopt = 50         ! Minumum number of optimisation steps
+integer                 , parameter                             :: nmaxopt = 500          ! Maximum number of optimisation steps
 integer                                                         :: iopt              ! Current number of optimisation steps
 integer                                                         :: nlin              ! Current number of line search
-real(kind =real_kind)   , parameter                             :: distiniini = 1d-3       ! Size of initial optimisation step
-real(kind =real_kind)   , parameter                             :: distmin = 1d-10       ! Size of final optimisation step
+real(kind =real_kind)   , parameter                             :: distiniini = 1d-4     ! Size of initial optimisation step
+real(kind =real_kind)   , parameter                             :: distmin = 1d-12       ! Minimum size of optimisation step
+real(kind =real_kind)   , parameter                             :: distmax = 1d-1         ! Maximum size of optimisation step
 real(kind =real_kind)   , parameter                             :: convratio = 1d3       ! Size of final optimisation step
 logical                                                         :: computedg
 
