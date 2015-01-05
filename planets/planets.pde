@@ -21,6 +21,7 @@ JSONObject currentDataFrame;
 JSONObject newDataFrame;
 
 boolean enableGrid = true;
+boolean enableTrace = true;
 
 File inputFile;
 BufferedReader reader;
@@ -87,6 +88,10 @@ void fileSelected(File file) {
   Float maxTime = (Float)Data.getMaxTime()*DEFAULT_TIME_RATIO/1000;
   timeline.setRange(0, maxTime); // s
   maxTimeLabel.setText(maxTime.toString());
+  
+  synchronized (this) {
+    this.notify();
+  }
 }
 
 void getData() {
@@ -136,9 +141,6 @@ void display(float[] coords, float mass, color planetColor) {
   );
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
-  System.out.print(x);
-  System.out.print(",");
-  System.out.println(y);
   fill(planetColor);
   ellipse(x, y, diameter, diameter);
 }
@@ -162,8 +164,6 @@ void displayTrace() {
     
     Iterator<String> keys = positions2.keys().iterator();
     while(keys.hasNext()) {
-      System.out.print(distance);
-      System.out.print(" ");
       int alpha = floor((frameTime - (currentTime - traceLength)) * 255 / traceLength);
       stroke(255,0,0, alpha);
       String objectKey = keys.next();
@@ -175,10 +175,6 @@ void displayTrace() {
       int y2 = floor(origin[1] + planetCoordsJSON2.getFloat(1)*scaleRatio);
       int x1 = floor(origin[0] + planetCoordsJSON1.getFloat(0)*scaleRatio);
       int y1 = floor(origin[1] + planetCoordsJSON1.getFloat(1)*scaleRatio);
-      
-      System.out.print(x1);
-      System.out.print(",");
-      System.out.println(y1);
       
       line(x2, y2, x1, y1);
     }
@@ -212,9 +208,10 @@ void setup() {
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
+  frame.setResizable(true);
   
   getData(); // TODO condition to "replay mode"
-  
+
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   
   cp5 = new ControlP5(this);
@@ -233,9 +230,13 @@ void setup() {
     .setColorForeground(color(120))
     .setColorActive(color(255))
     .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(60)
     .setSize(10, 10)
     .addItem("Enable grid", 0) // Internal value is not used
+    .addItem("Enable trace", 0) // Internal value is not used
     .toggle(0)
+    .toggle(1)
     ;
   timeSpeedSlider = cp5.addSlider("timeSpeedSlider")
     .setGroup("menu")
@@ -261,10 +262,17 @@ void setup() {
   maxTimeLabel = cp5.addTextlabel("maxTimeLabel")
     .setPosition(width-30, height-10); // Text is set in fileSelected method
     ;
+    
+  synchronized (this) { // Waits for the file to be selected.
+    try {
+      this.wait();
+    } catch (InterruptedException e) {}
+  }
 }
 
 void draw() {  
   // getLiveData(); // TODO condition to "live mode"
+  
   background(255,255,255);
   if (enableGrid) {
     drawGrid();
@@ -280,7 +288,9 @@ void draw() {
   }
   if (currentDataFrame != null) {
     display(currentDataFrame);
-    displayTrace();
+    if (enableTrace) {
+      displayTrace();
+    }
   }
   
   disclaimer.display(
@@ -313,8 +323,10 @@ void mouseWheel(MouseEvent event) {
  * NAVIGATION
  */
 void mouseDragged() {
-  origin[0] += mouseX - pmouseX;
-  origin[1] += mouseY - pmouseY;
+  if (!cp5.isMouseOver()) {
+    origin[0] += mouseX - pmouseX;
+    origin[1] += mouseY - pmouseY;
+  }
 }
 
 void keyPressed() {
@@ -345,6 +357,7 @@ void keyPressed() {
 void controlEvent(ControlEvent event) { // Checkbox event
   if (event.isFrom(enableGridCheckbox)){
     enableGrid = (enableGridCheckbox.getArrayValue()[0] == 1.0);
+    enableTrace = (enableGridCheckbox.getArrayValue()[1] == 1.0);
   }
 }
 
@@ -364,6 +377,10 @@ void changeSourceFileButton(int value) {
   getData();
 }
 
+/**
+ * Jumps at the selected time.
+ * Sets the currentDataFrame instead of the newDataFrame in order to avoid refreshing the timeline again.
+ */
 void timeline(float time) {
   if (timeline.isMousePressed()) {
     Data.resetCursor();
