@@ -152,8 +152,8 @@ void displayTrace() {
   int cursor = Data.getCursor();
   int dataSize = Data.getSize();
   while (frameTime >= currentTime - traceLength
-    && cursor + distance >= 0
-    && cursor + distance < dataSize) {
+      && cursor + distance >= 0
+      && cursor + distance < dataSize) {
     JSONObject dataFrame2 = Data.getDataFrameFromCursor(distance+1);
     JSONObject dataFrame1 = Data.getDataFrameFromCursor(distance);
     
@@ -167,16 +167,17 @@ void displayTrace() {
       int alpha = floor((frameTime - (currentTime - traceLength)) * 255 / traceLength);
       stroke(255,0,0, alpha);
       String objectKey = keys.next();
-      
-      JSONArray planetCoordsJSON2 = positions2.getJSONArray(objectKey);
-      JSONArray planetCoordsJSON1 = positions1.getJSONArray(objectKey);
-      
-      int x2 = floor(origin[0] + planetCoordsJSON2.getFloat(0)*scaleRatio);
-      int y2 = floor(origin[1] + planetCoordsJSON2.getFloat(1)*scaleRatio);
-      int x1 = floor(origin[0] + planetCoordsJSON1.getFloat(0)*scaleRatio);
-      int y1 = floor(origin[1] + planetCoordsJSON1.getFloat(1)*scaleRatio);
-      
-      line(x2, y2, x1, y1);
+      if (positions1.hasKey(objectKey)) { 
+        JSONArray planetCoordsJSON2 = positions2.getJSONArray(objectKey);
+        JSONArray planetCoordsJSON1 = positions1.getJSONArray(objectKey);
+        
+        int x2 = floor(origin[0] + planetCoordsJSON2.getFloat(0)*scaleRatio);
+        int y2 = floor(origin[1] + planetCoordsJSON2.getFloat(1)*scaleRatio);
+        int x1 = floor(origin[0] + planetCoordsJSON1.getFloat(0)*scaleRatio);
+        int y1 = floor(origin[1] + planetCoordsJSON1.getFloat(1)*scaleRatio);
+        
+        line(x2, y2, x1, y1);
+      }
     }
     distance--;
   }
