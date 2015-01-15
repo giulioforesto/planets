@@ -11,11 +11,9 @@ int MAX_PLANET_SIZE = 40; // px
 int[] DIMENSIONS;
 float DEFAULT_TIME_RATIO = 300; // ms / time
 float DEFAULT_SCALE_RATIO = 20; // px / dist
-int DEFAULT_TRACE_LENGTH = 3; // time
 
 int[] origin;
 float scaleRatio = DEFAULT_SCALE_RATIO;
-int traceLength = DEFAULT_TRACE_LENGTH;
 
 JSONObject currentDataFrame;
 JSONObject newDataFrame;
@@ -136,54 +134,8 @@ void display(float[] coords, float mass, color planetColor) {
   );
   int x = floor(origin[0] + coords[0]*scaleRatio);
   int y = floor(origin[1] + coords[1]*scaleRatio);
-  System.out.print(x);
-  System.out.print(",");
-  System.out.println(y);
   fill(planetColor);
   ellipse(x, y, diameter, diameter);
-}
-
-void displayTrace() {
-  float currentTime = currentDataFrame.getFloat("t");
-  float frameTime = currentTime;
-  int distance = -2;
-  int cursor = Data.getCursor();
-  int dataSize = Data.getSize();
-  while (frameTime >= currentTime - traceLength
-    && cursor + distance >= 0
-    && cursor + distance < dataSize) {
-    JSONObject dataFrame2 = Data.getDataFrameFromCursor(distance+1);
-    JSONObject dataFrame1 = Data.getDataFrameFromCursor(distance);
-    
-    frameTime = dataFrame1.getFloat("t");
-    
-    JSONObject positions2 = dataFrame2.getJSONObject("x");
-    JSONObject positions1 = dataFrame1.getJSONObject("x");
-    
-    Iterator<String> keys = positions2.keys().iterator();
-    while(keys.hasNext()) {
-      System.out.print(distance);
-      System.out.print(" ");
-      int alpha = floor((frameTime - (currentTime - traceLength)) * 255 / traceLength);
-      stroke(255,0,0, alpha);
-      String objectKey = keys.next();
-      
-      JSONArray planetCoordsJSON2 = positions2.getJSONArray(objectKey);
-      JSONArray planetCoordsJSON1 = positions1.getJSONArray(objectKey);
-      
-      int x2 = floor(origin[0] + planetCoordsJSON2.getFloat(0)*scaleRatio);
-      int y2 = floor(origin[1] + planetCoordsJSON2.getFloat(1)*scaleRatio);
-      int x1 = floor(origin[0] + planetCoordsJSON1.getFloat(0)*scaleRatio);
-      int y1 = floor(origin[1] + planetCoordsJSON1.getFloat(1)*scaleRatio);
-      
-      System.out.print(x1);
-      System.out.print(",");
-      System.out.println(y1);
-      
-      line(x2, y2, x1, y1);
-    }
-    distance--;
-  }
 }
 
 void drawGrid() {
@@ -280,7 +232,6 @@ void draw() {
   }
   if (currentDataFrame != null) {
     display(currentDataFrame);
-    displayTrace();
   }
   
   disclaimer.display(

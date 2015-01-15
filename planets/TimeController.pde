@@ -22,13 +22,13 @@ public class TimeController {
   }
   
   public void setTimeRatio(float newTimeRatio) {
-    float ratio = DEFAULT_TIME_RATIO/newTimeRatio;
-    if (ratio > 0.95 && ratio < 1.05) {
-      newTimeRatio = DEFAULT_TIME_RATIO;
-    }
     float var = newTimeRatio/timeRatio;
     timeOrigin = floor(millis()*(1-var) + timeOrigin*var);
     timeRatio = newTimeRatio;
+    float ratio = DEFAULT_TIME_RATIO/timeRatio;
+    if (ratio > 0.95 && ratio < 1.05) {
+      timeRatio = DEFAULT_TIME_RATIO;
+    }
   }
   
   public float increaseTimeRatio(float var) {

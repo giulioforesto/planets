@@ -250,9 +250,9 @@ subroutine evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
                             fijpq =  Guniv*xijpq * forceoverdist(xijpq2)
                             do k=0,nf(i)
                                 gradlag(:,1,i,k) = gradlag(:,1,i,k) &
-                                + (sincostable(1,l,i,q,k) - sincostable(1,l,i,j,k)) * fijpq
+                                + mc(i)*mc(i)*(sincostable(1,l,i,q,k) - sincostable(1,l,i,j,k)) * fijpq
                                 gradlag(:,2,i,k) = gradlag(:,2,i,k) &
-                                + (sincostable(2,l,i,q,k) - sincostable(2,l,i,j,k)) * fijpq                            
+                                + mc(i)*mc(i)*(sincostable(2,l,i,q,k) - sincostable(2,l,i,j,k)) * fijpq                            
                             end do
                         end do
                     else
@@ -265,13 +265,13 @@ subroutine evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
                             fijpq =  Guniv*xijpq * forceoverdist(xijpq2)
                             do k=0,nf(i)
                                 gradlag(:,1,i,k) = gradlag(:,1,i,k) &
-                                - sincostable(1,l,i,j,k) * fijpq
+                                - mc(i)*mc(p)*sincostable(1,l,i,j,k) * fijpq
                                 gradlag(:,2,i,k) = gradlag(:,2,i,k) &
-                                - sincostable(2,l,i,j,k) * fijpq                                 
+                                - mc(i)*mc(p)*sincostable(2,l,i,j,k) * fijpq                                 
                                 gradlag(:,1,p,k) = gradlag(:,1,p,k) &
-                                + sincostable(1,l,p,q,k) * fijpq
+                                + mc(i)*mc(p)*sincostable(1,l,p,q,k) * fijpq
                                 gradlag(:,2,p,k) = gradlag(:,2,p,k) &
-                                + sincostable(2,l,p,q,k) * fijpq                                 
+                                + mc(i)*mc(p)*sincostable(2,l,p,q,k) * fijpq                                 
                             end do
                         end do
                     end if

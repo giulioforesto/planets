@@ -16,8 +16,8 @@ character(len=*)        , parameter                     :: exportinitstatefilena
     './output/initstateconverged.txt'
 character(len=*)        , parameter                     :: exportcheattrajfilename = &
     './output/cheattrajconverged.txt'
-!~ logical                 , parameter                     :: restartfromlast = .false.
-logical                 , parameter                     :: restartfromlast = .true.
+logical                 , parameter                     :: restartfromlast = .false.
+!~ logical                 , parameter                     :: restartfromlast = .true.
 
     
 real (kind = real_kind) , parameter                     :: pi = &

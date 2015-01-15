@@ -20,7 +20,7 @@ end if
 !~ call readgaussmeth(xi,wi,si,gaussmethfilename)
 
 
-si = 7*maxnf
+si = 3*maxnf
 allocate(wi(si))
 allocate(xi(si))
 
@@ -71,9 +71,24 @@ call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
 
 call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
 
-    do k=1,maxnf
-        gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**2)
-    end do
+
+
+allocate(gradactdf(nd,2,nc,0:maxnf))
+call evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactdf,1d-7)
+
+
+gradactdf = gradactdf - gradact
+call evalnormgradaction(gradactdf,nc,nf,maxnf,ninf,n1,n2)
+
+print*,ninf,n1,n2
+
+pause
+
+
+
+do k=1,maxnf
+    gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**2)
+end do
 
 
 call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
