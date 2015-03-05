@@ -29,13 +29,6 @@ do i=1,si
     wi(i) = 2.0_16 / (si)
 end do
 
-
-
-
-
-
-
-
 if (.not. (allocated(abf))) then
     
     allocate(   abf(nd,2,nc,0:maxnf)  )
@@ -68,24 +61,7 @@ allocate(gradact(nd,2,nc,0:maxnf))
 allocate(abfs(nd,2,nc,0:maxnf))
 
 call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
-
 call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
-
-
-
-allocate(gradactdf(nd,2,nc,0:maxnf))
-call evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactdf,1d-7)
-
-
-gradactdf = gradactdf - gradact
-call evalnormgradaction(gradactdf,nc,nf,maxnf,ninf,n1,n2)
-
-print*,ninf,n1,n2
-
-pause
-
-
-
 do k=1,maxnf
     gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**2)
 end do
@@ -120,18 +96,12 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
         nlin = 1
     else
     
-        
-        
         actg = act
         abfs = abf  - distm*gradact
         call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm)
 
-
-
-
         computedg = .true.
         ! Golden search between  actg and actd
-        
         
         nlin = 2
         
@@ -178,13 +148,6 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
     gradact = gradact    
     
     do k=1,maxnf
-!~     
-!~         if (iopt < 100) then
-!~             gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**1.5)
-!~         else
-!~             gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**1.5)
-!~         end if
-!~         call random_number(nran)
         gradact(:,:,:,k) = gradact(:,:,:,k) /(k**(2))
     end do
     

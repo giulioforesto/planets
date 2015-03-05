@@ -55,14 +55,16 @@ real(kind =real_kind)   , parameter                             :: distmax = 1d-
 real(kind =real_kind)   , parameter                             :: convratio = 1d3       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 1d-2         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 1d-3         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 1d-3         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1d-5         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1d-4         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1d-4         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
-real(kind=real_kind)                                            :: act                  ! Value of action
+real(kind=real_kind)                                            :: act,actnew                  ! Value of action
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradact              ! Value of gradient of action
 real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradactdf              ! Value of gradient of action
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradactd              ! Value of gradient of action
+real(kind=real_kind)    , dimension(:,:,:,:)    , allocatable   :: gradactnew              ! Value of gradient of action
 real(kind=real_kind)                                            :: ninf,n1,n2           ! Norms of gradient of action
 
 real(kind=real_kind)                                            :: actg,actm,actm2,actd
