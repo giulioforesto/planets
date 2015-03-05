@@ -60,7 +60,43 @@ call evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
 allocate(gradact(nd,2,nc,0:maxnf))
 allocate(abfs(nd,2,nc,0:maxnf))
 
-call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
+call evalactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
+call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,actnew)
+print*,"Action"
+print*,"Nouveau - Ancien"
+print*,abs(act-actnew)
+
+
+allocate(gradactdf(nd,2,nc,0:maxnf))
+allocate(gradactd(nd,2,nc,0:maxnf))
+allocate(gradactnew(nd,2,nc,0:maxnf))
+call evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactdf,1d-7)
+call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactnew)
+call evalgradactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
+
+print*,"Gradient de l'action"
+
+gradactd = gradactdf - gradact
+call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+print*,"Ancien - différences finies"
+print*,ninf,n1,n2
+
+gradactd = gradactnew - gradactdf
+call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+print*,"Nouveau - différences finies"
+print*,ninf,n1,n2
+
+gradactd = gradactnew - gradact
+call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+print*,"Nouveau - Ancien"
+print*,ninf,n1,n2
+
+!~ pause
+
+
+
+
+
 call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
 do k=1,maxnf
     gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**2)
@@ -96,12 +132,18 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
         nlin = 1
     else
     
+        
+        
         actg = act
         abfs = abf  - distm*gradact
         call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abfs,actm)
 
+
+
+
         computedg = .true.
         ! Golden search between  actg and actd
+        
         
         nlin = 2
         
@@ -148,6 +190,13 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
     gradact = gradact    
     
     do k=1,maxnf
+!~     
+!~         if (iopt < 100) then
+!~             gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**1.5)
+!~         else
+!~             gradact(:,:,:,k) = gradact(:,:,:,k) /((k)**1.5)
+!~         end if
+!~         call random_number(nran)
         gradact(:,:,:,k) = gradact(:,:,:,k) /(k**(2))
     end do
     

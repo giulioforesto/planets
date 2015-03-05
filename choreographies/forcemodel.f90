@@ -6,6 +6,7 @@ pure function potential(x2) result(f)
     real(kind=real_kind)                    :: f
     
     f = (x2 ** ( (fpow)/2 ) ) / fpow
+!~     f = 0
     
 end function
 
@@ -17,6 +18,7 @@ pure function forceoverdist(x2) result(f)
     real(kind=real_kind)                    :: f
     
     f = (x2 ** ( (fpow-2)/2 ) )
+!~     f = 0
     
 end function
 !~ 
