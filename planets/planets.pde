@@ -42,44 +42,6 @@ color randomColor() {
   return color(r, g, b);
 }
 
-void getLiveData() { // TODO update according to new architecture
-  try {
-    inputFile = new File(INPUT_FILE_ABSOLUTE_PATH);
-    reader = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(inputFile)));
-  
-    String line = "";
-    JSONObject dataFrame;
-  
-    line = reader.readLine();
-    if (line != null) {
-      dataFrame = JSONObject.parse(line);
-    } else {
-      return;
-    }
-    
-    JSONArray buffer = new JSONArray();
-    float insertTime = dataFrame.getFloat("t");
-    while (insertTime > Data.lastTime) {
-      buffer.append(dataFrame);
-      line = reader.readLine();
-      if (line != null) {
-        dataFrame = JSONObject.parse(line);
-      } else {
-        break;
-      }
-      insertTime = dataFrame.getFloat("t");
-    }
-    reader.close();
-  
-    for (int i = buffer.size() - 1; i >= 0; i--) {
-        Data.add(buffer.getJSONObject(i));
-    }
-  }
-  catch (IOException e) {
-    e.printStackTrace();
-  }
-}
-
 void fileSelected(File file) {
   Data.setData(loadJSONArray(file));
   timeController = new TimeController();
@@ -204,14 +166,14 @@ void drawGrid() {
   }
 }
 
-void setup() {
+void setup() {  
   DIMENSIONS = new int[] {displayWidth*9/10, displayHeight*9/10};
   
   frameRate(FRAME_RATE_PARAM);
   size(DIMENSIONS[0], DIMENSIONS[1]);
   frame.setResizable(true);
   
-  getData(); // TODO condition to "replay mode"
+  getData();
 
   origin = new int [] {DIMENSIONS[0]/2, DIMENSIONS[1]/2};
   
@@ -272,9 +234,9 @@ void setup() {
 }
 
 void draw() {  
-  // getLiveData(); // TODO condition to "live mode"
   
   background(255,255,255);
+  
   if (enableGrid) {
     drawGrid();
   }
@@ -372,10 +334,7 @@ void timeSpeedSlider(float ratio) {
 }
 
 void changeSourceFileButton(int value) {
-  if (!timeController.paused) {
-    timeController.pause();
-  }
-  getData();
+  setup();
 }
 
 /**
