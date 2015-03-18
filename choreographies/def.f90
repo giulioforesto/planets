@@ -55,9 +55,9 @@ real(kind =real_kind)   , parameter                             :: distmax = 1d-
 real(kind =real_kind)   , parameter                             :: convratio = 1d3       ! Size of final optimisation step
 logical                                                         :: computedg
 
-real(kind =real_kind)   , parameter                             :: ninfmax = 1d-5         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n1max   = 1d-4         ! Maximum value of norm of gradient of action
-real(kind =real_kind)   , parameter                             :: n2max   = 1d-4         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: ninfmax = 1d-1         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n1max   = 1d-1         ! Maximum value of norm of gradient of action
+real(kind =real_kind)   , parameter                             :: n2max   = 1d-1         ! Maximum value of norm of gradient of action
 
 real(kind=real_kind)                                            :: nran                 ! Random number
 real(kind=real_kind)                                            :: act,actnew                  ! Value of action

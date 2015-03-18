@@ -332,7 +332,7 @@ subroutine print_cheat_traj(nc,nb,mc,nf,abf,ntours,npts,filename)
         
         t = pt*dt
         
-        call writecurrentstate_nomasschange(iounit,t,xi,nbtot)
+        call writecurrentstate_nomasschange(iounit,t*3,xi,nbtot)
         
     end do
     

@@ -45,7 +45,7 @@ if (.not. (allocated(abf))) then
 !~                     abf(i,j,k,l) = 2*nran-1
 !~                     abf(i,j,k,l) = (2*nran-1)* (1.0_8/(l+1))
 !~                     abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-1.5))
-                    abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-1))/3
+                    abf(i,j,k,l) = (2*nran-1)* ((1.0_8*(l+1))**(-2))
                     
                 end do
             end do
@@ -59,37 +59,37 @@ call evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
 
 allocate(gradact(nd,2,nc,0:maxnf))
 allocate(abfs(nd,2,nc,0:maxnf))
-
-call evalactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
-call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,actnew)
-print*,"Action"
-print*,"Nouveau - Ancien"
-print*,abs(act-actnew)
-
-
-allocate(gradactdf(nd,2,nc,0:maxnf))
-allocate(gradactd(nd,2,nc,0:maxnf))
-allocate(gradactnew(nd,2,nc,0:maxnf))
-call evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactdf,1d-7)
-call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactnew)
-call evalgradactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
-
-print*,"Gradient de l'action"
-
-gradactd = gradactdf - gradact
-call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
-print*,"Ancien - différences finies"
-print*,ninf,n1,n2
-
-gradactd = gradactnew - gradactdf
-call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
-print*,"Nouveau - différences finies"
-print*,ninf,n1,n2
-
-gradactd = gradactnew - gradact
-call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
-print*,"Nouveau - Ancien"
-print*,ninf,n1,n2
+!~ 
+!~ call evalactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,act)
+!~ call evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,actnew)
+!~ print*,"Action"
+!~ print*,"Nouveau - Ancien"
+!~ print*,abs(act-actnew)
+!~ 
+!~ 
+!~ allocate(gradactdf(nd,2,nc,0:maxnf))
+!~ allocate(gradactd(nd,2,nc,0:maxnf))
+!~ allocate(gradactnew(nd,2,nc,0:maxnf))
+!~ call evalgradactiondifffin(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactdf,1d-7)
+!~ call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradactnew)
+!~ call evalgradactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
+!~ 
+!~ print*,"Gradient de l'action"
+!~ 
+!~ gradactd = gradactdf - gradact
+!~ call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+!~ print*,"Ancien - différences finies"
+!~ print*,ninf,n1,n2
+!~ 
+!~ gradactd = gradactnew - gradactdf
+!~ call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+!~ print*,"Nouveau - différences finies"
+!~ print*,ninf,n1,n2
+!~ 
+!~ gradactd = gradactnew - gradact
+!~ call evalnormgradaction(gradactd,nc,nf,maxnf,ninf,n1,n2)
+!~ print*,"Nouveau - Ancien"
+!~ print*,ninf,n1,n2
 
 !~ pause
 
@@ -187,7 +187,6 @@ do while ((iopt < nminopt).or.((iopt < nmaxopt).and.(ninf > ninfmax).and.(n1 > n
 
     call evalgradaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,gradact)
     call evalnormgradaction(gradact,nc,nf,maxnf,ninf,n1,n2)
-    gradact = gradact    
     
     do k=1,maxnf
 !~     

@@ -49,7 +49,7 @@ subroutine evaltrig(xi,si,nc,nb,nf,maxnf,sincostable)
     !$omp end parallel
  end subroutine
  
-subroutine evalactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
+subroutine evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
     integer                                                     , intent(in)    :: nc,si,nd
     integer                 , dimension(nc)                     , intent(in)    :: nb,nf
     integer                                                     , intent(in)    :: maxnf,maxnb
@@ -123,7 +123,7 @@ subroutine evalactionold(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
 
 end subroutine
 
-subroutine evalaction(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
+subroutine evalactionnew(nd,si,wi,nc,nb,maxnb,mc,nf,maxnf,sincostable,abf,res)
     integer                                                     , intent(in)    :: nc,si,nd
     integer                 , dimension(nc)                     , intent(in)    :: nb,nf
     integer                                                     , intent(in)    :: maxnf,maxnb
