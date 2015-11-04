@@ -91,19 +91,20 @@ subroutine findpolyroot_sec(P,n,a,b,res)    ! Finds root of polynomial P of degr
     
 end subroutine
 
-subroutine writebutchertable(a,b,c,s,prec)
+subroutine writebutchertable(a,b,c,s,prec,name)
     
     real (kind = real_kind) , dimension(s,s)    , intent(in)    :: a
     real (kind = real_kind) , dimension(s)      , intent(in)    :: b,c
     integer                                     , intent(in)    :: s,prec
-    
+    character(len=*)                            , intent(in)    :: name
+        
     character(len=50)                                           :: filename
     
     integer , parameter                 :: iounit = 2       ! Number required by Fortran for Input/Output
     integer                             :: i
     
     
-    write(filename, '(A26,I3,A4,I2,A4)') "./output/gauss_butch_table", s,"prec",prec,".txt"
+    write(filename, '(A,A,I3,A4,I2,A4)') "./output/",name, s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
     
@@ -119,16 +120,17 @@ subroutine writebutchertable(a,b,c,s,prec)
     
 end subroutine
 
-subroutine writegaussmeth(x,w,s,prec)
+subroutine writegaussmeth(x,w,s,prec,name)
     
-    real (kind = real_kind) , dimension(s)      , intent(in)    :: x,w
+    real (kind = real_kind) , dimension(:)      , intent(in)    :: x,w
     integer                                     , intent(in)    :: s,prec
+    character(len=*)                            , intent(in)    :: name
     
     character(len=50)                                           :: filename
     
     integer , parameter                 :: iounit = 2       ! Number required by Fortran for Input/Output
     
-    write(filename, '(A23,I4,A4,I2,A4)') "./output/gauss_int_meth", s,"prec",prec,".txt"
+    write(filename, '(A,A,I4,A4,I2,A4)') "./output/",name, s,"prec",prec,".txt"
     
     open(unit = iounit, file = trim(filename))
 
@@ -210,6 +212,26 @@ subroutine evalpleg(n,x,res)    ! Evaluates the nth Legendre polynomial at point
     
 end subroutine
 
+subroutine evalplegder(n,x,res)    ! Evaluates the nth Legendre polynomial derivative times (1-x²)/n at point x and stores result in res
+
+    integer                                 , intent(in)    :: n
+    real (kind = real_kind)                 , intent(in)    :: x
+    real (kind = real_kind)                 , intent(out)   :: res 
+    
+    integer                                                 :: i
+    real (kind = real_kind) , dimension(0:2)                :: pleg 
+
+    pleg(0) = 1
+    pleg(1) = x
+    
+    do i=2,n
+        pleg(modulo(i,3)) = ((2*i -1)*x*pleg(modulo(i-1,3)) + (1-i)*pleg(modulo(i-2,3)) )/i
+    end do
+    
+    res = x*pleg(modulo(n,3)) - pleg(modulo(n-1,3))
+    
+end subroutine
+
 subroutine findplegroot_dichot(n,a,b,res)    ! Finds root of Legendre Polynomial polynomial of degree n between a and b assuming there is one using dichotomy
 
     integer                                     , intent(in)    :: n
@@ -240,6 +262,50 @@ subroutine findplegroot_dichot(n,a,b,res)    ! Finds root of Legendre Polynomial
         do while ((b-a) > eps)
             res = (a + b)/2
             call evalpleg(n,res,pi)
+            if (pi == 0) then
+                return 
+            else if (papos .eqv. (pi > 0)) then
+                a = res
+                pa = pi
+            else
+                b = res
+                pb = pi
+            end if
+        end do
+    end if
+    
+end subroutine
+
+subroutine findplegderroot_dichot(n,a,b,res)    ! Finds root of Legendre Polynomial polynomial of degree n between a and b assuming there is one using dichotomy
+
+    integer                                     , intent(in)    :: n
+    real (kind = real_kind)                     , intent(inout) :: a,b
+    real (kind = real_kind)                     , intent(out)   :: res
+    
+    real (kind = real_kind)                                     :: pa,pb,pi
+    real (kind = real_kind)                                     :: eps
+    logical                                                     :: papos,pbpos
+    
+    call evalplegder(n,a,pa)
+    call evalplegder(n,b,pb)
+    
+    papos = (pa > 0)
+    pbpos = (pb > 0)
+    
+    if (papos .eqv. pbpos) then
+        print*, 'Error : Cannot find solution'
+        print*, 'a =',a
+        print*, 'pa =',pa
+        print*, 'b =',b
+        print*, 'pb =',pb
+        call exit(0)
+    else
+        
+        eps = epsilon(a)
+        
+        do while ((b-a) > eps)
+            res = (a + b)/2
+            call evalplegder(n,res,pi)
             if (pi == 0) then
                 return 
             else if (papos .eqv. (pi > 0)) then
