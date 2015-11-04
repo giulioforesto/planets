@@ -89,17 +89,6 @@ do i=2,num_steps
     shx(1:i) = (Proots(1:i,modulo(i,2))+1)/2        
     shw(1:i) = Legwei(1:i)/2
 
-    do k=1,i
-        do q=1,i
-            if (k .ne. q) then
-                invdiff(k,q) = 1/(shx(k) - shx(q))
-            else
-                invdiff(k,q) = 1
-            end if
-        end do
-    end do
-
-
     if (compute_butcher) then
         
         ! Calcul de c
@@ -118,6 +107,16 @@ do i=2,num_steps
         
         print*, "Computing a"
         
+        do k=1,i
+            do q=1,i
+                if (k .ne. q) then
+                    invdiff(k,q) = 1/(c_butch(k) - c_butch(q))
+                else
+                    invdiff(k,q) = 1
+                end if
+            end do
+        end do
+
         ! This is the slow part. Optimized, but the algo is O(n**4), so ... very bad
 
         !$omp parallel default(private) firstprivate(shx,shw,i,invdiff) shared(a_butch)
@@ -130,7 +129,7 @@ do i=2,num_steps
                     b = c_butch(j)*shx(p)
                     do q=1,i
                         if (k .ne. q) then
-                            c = c*((b - shx(q))*invdiff(k,q))
+                            c = c*((b - c_butch(q))*invdiff(k,q))
                         end if
                     end do
                     a = a + shw(p)*c
@@ -152,21 +151,31 @@ do i=2,num_steps
 
         print*, "Computing c"
         
-        c_butch(1:i) = (Pderroots(0:i)+1)/2
+        c_butch(0:i) = (Pderroots(0:i)+1)/2
 
         ! Calcul de b
 
         print*, "Computing b"
         
-        b_butch(1:i) = Lobwei(0:i)/2
+        b_butch(0:i) = Lobwei(0:i)/2
         
         ! calcul de a 
         
         print*, "Computing a"
         
+        do k=0,i
+            do q=0,i
+                if (k .ne. q) then
+                    invdiff(k,q) = 1/(c_butch(k) - c_butch(q))
+                else
+                    invdiff(k,q) = 1
+                end if
+            end do
+        end do
+
         ! This is the slow part. Optimized, but the algo is O(n**4), so ... very bad
 
-        !$omp parallel default(private) firstprivate(shx,shw,i,invdiff) shared(a_butch)
+        !$omp parallel default(private) firstprivate(b_butch,c_butch,shx,shw,i,invdiff) shared(a_butch)
         !$omp do         
         do j=0,i
             do k=0,i
@@ -174,9 +183,9 @@ do i=2,num_steps
                 do p=1,i
                     c = 1
                     b = c_butch(j)*shx(p)
-                    do q=1,i
+                    do q=0,i
                         if (k .ne. q) then
-                            c = c*((b - shx(q))*invdiff(k,q))
+                            c = c*((b - c_butch(q))*invdiff(k,q))
                         end if
                     end do
                     a = a + shw(p)*c
